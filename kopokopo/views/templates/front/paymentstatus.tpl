@@ -1,7 +1,7 @@
 {extends file='page.tpl'}
 {block name='page_title'}{l s='M-PESA payment status' mod='kopokopo'}{/block}
 {block name='page_content'}
-<section class="card card-block" id="kopokopo-status" data-status-url="{$status_url|escape:'html':'UTF-8'}" data-state="{$payment_status.state|escape:'html':'UTF-8'}">
+<section class="kopokopo-payment-panel card card-block" id="kopokopo-status" data-status-url="{$status_url|escape:'html':'UTF-8'}" data-state="{$payment_status.state|escape:'html':'UTF-8'}">
   <p id="kopokopo-message" role="status" aria-live="polite">{$payment_status.message|escape:'html':'UTF-8'}</p>
   <p>{l s='Payment reference:' mod='kopokopo'} <code>{$payment_status.reference|escape:'html':'UTF-8'}</code></p>
   <p>{l s='Keep this reference if you contact the merchant. You can refresh this page to check again.' mod='kopokopo'}</p>
@@ -13,5 +13,6 @@
     <a class="btn btn-primary" href="{$checkout_url|escape:'html':'UTF-8'}">{l s='Return to checkout' mod='kopokopo'}</a>
   {/if}
   <noscript><p>{l s='Refresh this page to see the latest payment status.' mod='kopokopo'}</p></noscript>
+  {include file='module:kopokopo/views/templates/_partials/attribution.tpl'}
 </section>
 {/block}

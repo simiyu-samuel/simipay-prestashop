@@ -1,5 +1,12 @@
 <div class="panel">
-  <h3>{l s='Kopo Kopo M-PESA' mod='kopokopo'}</h3>
+  <div class="kopokopo-admin-header">
+    <img src="{$branding_logo|escape:'html':'UTF-8'}" alt="" width="64" height="64">
+    <div>
+      <h3>SIMIPAY <span class="kopokopo-admin-subtitle">(M-PESA)</span></h3>
+      <p>{l s='Developed and maintained by' mod='kopokopo'} <a href="https://simiyu-samuel.vercel.app/" target="_blank" rel="noopener noreferrer">Samuel Simiyu</a></p>
+      <p class="kopokopo-admin-version">{l s='Version' mod='kopokopo'} {$module_version|escape:'html':'UTF-8'} · {l s='Independent open-source integration with Kopo Kopo API v2' mod='kopokopo'}</p>
+    </div>
+  </div>
   <p>{l s='PrestaShop 9.2 · PHP 8.2–8.5 · KES · single store. No code editing or Composer installation is required.' mod='kopokopo'}</p>
   <p><a href="https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/blob/main/docs/installation.md" target="_blank" rel="noopener noreferrer">{l s='Installation and configuration guide' mod='kopokopo'}</a></p>
   {foreach $requirements as $requirement}<p class="alert alert-danger">{$requirement|escape:'html':'UTF-8'}</p>{/foreach}

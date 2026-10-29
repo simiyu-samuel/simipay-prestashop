@@ -1,0 +1,27 @@
+/* SIMIPAY (M-PESA) — Samuel Simiyu. Scoped to module content. */
+.kopokopo-payment-panel {
+  box-sizing: border-box;
+  max-width: 48rem;
+  margin: 0 auto 1.5rem;
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid #d9e5df;
+  border-top: 4px solid #146b45;
+  border-radius: .75rem;
+  background: #fff;
+  color: #24392f;
+}
+.kopokopo-payment-heading { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; font-size: 1.25rem; }
+.kopokopo-payment-symbol { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: .6rem; background: #146b45; color: #fff; font-weight: 700; }
+.kopokopo-attribution { margin: 1rem 0 0; padding-top: .75rem; border-top: 1px solid #d9e5df; color: #52675c; font-size: .875rem; line-height: 1.6; }
+.kopokopo-attribution a { color: #146b45; text-decoration: underline; text-underline-offset: .15em; }
+.kopokopo-attribution a:hover { color: #0b4930; }
+.kopokopo-attribution a:focus-visible { outline: 2px solid #146b45; outline-offset: 3px; border-radius: 2px; }
+.kopokopo-checkout-branding { padding: .5rem 0 1rem; }
+.kopokopo-checkout-branding > p { margin-bottom: .25rem; }
+.kopokopo-payment-result { margin: 1rem 0; }
+.kopokopo-admin-header { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #d9e5df; }
+.kopokopo-admin-header img { flex: 0 0 64px; border-radius: 14px; }
+.kopokopo-admin-header h3 { margin: 0 0 .5rem !important; padding: 0 !important; border: 0 !important; color: #146b45; font-weight: 700; }
+.kopokopo-admin-header p { margin: .25rem 0; }
+.kopokopo-admin-subtitle { color: #52675c; font-weight: 400; }
+.kopokopo-admin-version { color: #52675c; font-size: .875rem; }

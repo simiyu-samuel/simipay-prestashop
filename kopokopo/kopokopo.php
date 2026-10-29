@@ -22,15 +22,15 @@ class Kopokopo extends PaymentModule
     {
         $this->name = 'kopokopo';
         $this->tab = 'payments_gateways';
-        $this->version = '2.0.0';
-        $this->author = 'Samuel Simiyu and contributors';
+        $this->version = '2.0.1';
+        $this->author = 'Samuel Simiyu';
         $this->need_instance = 0;
         $this->bootstrap = true;
         $this->ps_versions_compliancy = ['min' => '9.2.0', 'max' => '9.2.99'];
         $this->controllers = ['payment', 'process', 'paymentstatus', 'callback', 'reconcile'];
         parent::__construct();
-        $this->displayName = $this->l('Kopo Kopo M-PESA');
-        $this->description = $this->l('Accept Kenyan shilling payments with Kopo Kopo API v2 STK Push.');
+        $this->displayName = $this->l('SIMIPAY (M-PESA)');
+        $this->description = $this->l('M-PESA checkout by Samuel Simiyu, powered by Kopo Kopo API v2.');
         $this->confirmUninstall = $this->l('Payment records and settings will be retained for reconciliation. Uninstall?');
     }
 
@@ -72,7 +72,7 @@ class Kopokopo extends PaymentModule
             return false;
         } catch (Throwable) {
             parent::uninstall();
-            $this->_errors[] = $this->l('Could not initialize Kopo Kopo. Check the database and server requirements.');
+            $this->_errors[] = $this->l('Could not initialize SIMIPAY. Check the database and server requirements.');
             return false;
         }
     }
@@ -84,7 +84,8 @@ class Kopokopo extends PaymentModule
         }
         $this->settings()->initialize();
         return ($this->isRegisteredInHook('paymentOptions') || $this->registerHook('paymentOptions'))
-            && ($this->isRegisteredInHook('displayPaymentReturn') || $this->registerHook('displayPaymentReturn'));
+            && ($this->isRegisteredInHook('displayPaymentReturn') || $this->registerHook('displayPaymentReturn'))
+            && ($this->isRegisteredInHook('actionFrontControllerSetMedia') || $this->registerHook('actionFrontControllerSetMedia'));
     }
 
     public function uninstall()
@@ -140,8 +141,19 @@ class Kopokopo extends PaymentModule
         $option = new PaymentOption();
         $option->setCallToActionText($this->l('Pay with M-PESA'))
             ->setModuleName($this->name)
+            ->setAdditionalInformation($this->display(__FILE__, 'views/templates/hook/payment_information.tpl'))
             ->setAction($this->context->link->getModuleLink($this->name, 'payment', [], true));
         return [$option];
+    }
+
+    public function hookActionFrontControllerSetMedia($params = [])
+    {
+        $controller = $this->context->controller;
+        $modulePage = $controller instanceof ModuleFrontController && $controller->module->name === $this->name;
+        if ($modulePage || in_array($controller->php_self ?? '', ['order', 'order-confirmation'], true)) {
+            $controller->registerStylesheet('kopokopo-branding', 'modules/kopokopo/views/css/branding.css',
+                ['media' => 'all', 'priority' => 150]);
+        }
     }
 
     public function hookPaymentReturn($params)
@@ -216,6 +228,9 @@ class Kopokopo extends PaymentModule
         }
         $settings = $this->settings();
         $repository = new AttemptRepository();
+        if ($this->context->controller) {
+            $this->context->controller->addCSS($this->_path . 'views/css/branding.css');
+        }
         $notice = '';
         try {
             $settings->initialize();
@@ -288,6 +303,8 @@ class Kopokopo extends PaymentModule
         }
         unset($row);
         $this->context->smarty->assign([
+            'branding_logo' => $this->_path . 'logo.png',
+            'module_version' => $this->version,
             'form_action' => $this->context->link->getAdminLink('AdminModules', true, [], ['configure' => $this->name]),
             'form_token' => Tools::getAdminTokenLite('AdminModules'), 'environment' => $environment,
             'till' => $settings->get($prefix . 'TILL'), 'client_id' => $settings->get($prefix . 'CLIENT_ID'),
