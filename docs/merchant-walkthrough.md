@@ -13,7 +13,7 @@ Use a fresh staging shop with PrestaShop 9.2.x, PHP 8.2–8.5, KES and the defau
 ## Follow the client’s steps
 
 1. Sign in to the shop's back office.
-2. Open **Modules > Module Manager > Upload a module**, and select `dist/kopokopo-2.0.0.zip` from this repository. Do not upload the repository source ZIP.
+2. Open **Modules > Module Manager > Upload a module**, and select `dist/kopokopo-2.0.1.zip` from this repository. Do not upload the repository source ZIP. The module appears as **SIMIPAY (M-PESA)** by Samuel Simiyu.
 3. Wait for the successful installation message, then choose **Configure**.
 4. Select **Sandbox (testing)** and enter the sandbox till, OAuth client ID, OAuth client secret and API key. Enter secrets directly in the admin form, not in an issue or a chat transcript.
 5. Save, then choose **Test saved connection**. Verify that credentials are retained when secret fields are left blank during a later save.

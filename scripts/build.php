@@ -10,7 +10,7 @@ $target = $destination . '/kopokopo-' . $version . '.zip';
 $zip = new ZipArchive();
 if ($zip->open($target, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) throw new RuntimeException('Cannot create ZIP.');
 $files = [];
-$allowedRoot = ['kopokopo.php', 'bootstrap.php', 'index.php', 'config.xml', '.htaccess', 'callbackText.php'];
+$allowedRoot = ['kopokopo.php', 'bootstrap.php', 'index.php', 'config.xml', '.htaccess', 'callbackText.php', 'logo.svg', 'logo.png'];
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/kopokopo', FilesystemIterator::SKIP_DOTS)) as $file) {
     if (!$file->isFile() || $file->isLink()) continue;
     $path = str_replace('\\', '/', substr($file->getPathname(), strlen($root . '/kopokopo/')));
@@ -20,6 +20,8 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/
 }
 $files += [
     'kopokopo/LICENSE' => $root . '/LICENSE',
+    'kopokopo/NOTICE' => $root . '/NOTICE',
+    'kopokopo/AUTHORS.md' => $root . '/AUTHORS.md',
     'kopokopo/README.md' => $root . '/README.md',
     'kopokopo/INSTALL.md' => $root . '/docs/installation.md',
 ];

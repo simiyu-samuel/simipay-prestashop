@@ -46,7 +46,7 @@ final class Client implements Gateway
             return $cached['token'];
         }
         $response = $this->transport->request('POST', $this->base . '/oauth/token', [
-            'Content-Type: application/x-www-form-urlencoded', 'Accept: application/json', 'User-Agent: PrestaShop-Kopokopo/2.0.0',
+            'Content-Type: application/x-www-form-urlencoded', 'Accept: application/json', 'User-Agent: SIMIPAY/2.0.1',
         ], http_build_query(['client_id' => $this->clientId, 'client_secret' => $this->clientSecret, 'grant_type' => 'client_credentials']));
         if ($response['status'] !== 200) {
             throw new GatewayException(false, 'Kopo Kopo authentication failed. Please ask the merchant to check the configuration.');
@@ -97,7 +97,7 @@ final class Client implements Gateway
     private function headers(string $token): array
     {
         return ['Content-Type: application/json', 'Accept: application/json',
-            'Authorization: Bearer ' . $token, 'User-Agent: PrestaShop-Kopokopo/2.0.0'];
+            'Authorization: Bearer ' . $token, 'User-Agent: SIMIPAY/2.0.1'];
     }
 
     private function json(string $body): array

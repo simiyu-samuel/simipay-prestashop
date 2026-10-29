@@ -6,8 +6,15 @@ $zip = new ZipArchive();
 if ($zip->open($path) !== true) throw new RuntimeException('Run php scripts/build.php first.');
 foreach (['kopokopo/kopokopo.php', 'kopokopo/bootstrap.php', 'kopokopo/config.xml', 'kopokopo/.htaccess',
     'kopokopo/upgrade/upgrade-2.0.0.php', 'kopokopo/src/Domain/Payments.php', 'kopokopo/views/js/status.js',
+    'kopokopo/upgrade/upgrade-2.0.1.php', 'kopokopo/views/templates/_partials/attribution.tpl',
+    'kopokopo/views/templates/hook/payment_information.tpl', 'kopokopo/views/css/branding.css',
+    'kopokopo/logo.png', 'kopokopo/logo.svg', 'kopokopo/AUTHORS.md', 'kopokopo/NOTICE',
     'kopokopo/INSTALL.md', 'kopokopo/LICENSE'] as $name) {
     if ($zip->locateName($name) === false) throw new RuntimeException('Missing package entry: ' . $name);
+}
+$logo = getimagesizefromstring($zip->getFromName('kopokopo/logo.png'));
+if (!$logo || $logo[0] !== 128 || $logo[1] !== 128 || $logo[2] !== IMAGETYPE_PNG) {
+    throw new RuntimeException('Module Manager logo must be a valid 128 × 128 PNG.');
 }
 for ($i = 0; $i < $zip->numFiles; ++$i) {
     $name = $zip->getNameIndex($i);

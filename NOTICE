@@ -1,0 +1,11 @@
+SIMIPAY (M-PESA)
+Created and maintained by Samuel Simiyu.
+Copyright (c) 2024-2026 Samuel Simiyu.
+
+Portfolio: https://simiyu-samuel.vercel.app/
+Canonical source: https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module
+
+Independent community integration for PrestaShop using the Kopo Kopo payment API.
+No official endorsement or certification is claimed.
+The software and original SIMIPAY artwork are distributed under the MIT license
+included in this package. See AUTHORS.md for project credits.

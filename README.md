@@ -1,12 +1,18 @@
-# Kopo Kopo M-PESA for PrestaShop
+![SIMIPAY icon](kopokopo/logo.png)
+
+# SIMIPAY (M-PESA) for PrestaShop
+
+Created and maintained by **[Samuel Simiyu](https://simiyu-samuel.vercel.app/)**. An independent open-source M-PESA integration using Kopo Kopo API v2.
 
 Accept M-PESA payments using Kopo Kopo API v2 STK Push. Customers enter a Kenyan mobile number, approve the prompt on their phone, and receive an order confirmation after the payment has been verified.
 
-**Version 2.0 is a modernization candidate.** Automated tests and packaging are available; a real Kopo Kopo sandbox transaction and the store-specific acceptance checklist must pass before a production release. See [validation status](docs/validation.md).
+**Version 2.0.1 is a release candidate.** Browser installation, real sandbox authentication, failed and successful sandbox payments, signed callbacks and native paid-order/receipt creation have been verified locally. Complete the remaining store-specific, runtime and live acceptance checks before a production release. See [validation status](docs/validation.md).
 
 ## For merchants
 
 Upload the **module ZIP** through PrestaShop's Module Manager, install it, and enter your Kopo Kopo credentials in its configuration page. No source editing, Composer, Node.js, or command-line installation is required.
+
+Find **SIMIPAY (M-PESA)** in Module Manager. Customers see **Pay with M-PESA** and **Powered by Samuel Simiyu**, with a link to the developer's portfolio. The technical folder and ZIP prefix remain `kopokopo` for upgrade compatibility.
 
 | Requirement | Supported target |
 | --- | --- |
@@ -26,7 +32,7 @@ PrestaShop 8, PHP 8.1 and earlier, multistore, other currencies, custom checkout
 3. Run the [checkout acceptance checklist](docs/testing.md) in staging and sandbox.
 4. Use [troubleshooting and payment recovery](docs/troubleshooting.md) if needed.
 
-Get merchant packages from [GitHub Releases](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases) once published. Choose `kopokopo-<version>.zip`, **not** GitHub's automatically generated “Source code” ZIP. Until a release is published, maintainers can build the same package with `php scripts/build.php`.
+Download **[kopokopo-2.0.1.zip](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/download/v2.0.1/kopokopo-2.0.1.zip)** from the **[SIMIPAY 2.0.1 pre-release](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/tag/v2.0.1)**. This is the module ready for upload, **not** GitHub's automatically generated “Source code” ZIP. Other versions are listed under [GitHub Releases](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases). Maintainers can build the package with `php scripts/build.php`.
 
 ## What the module handles
 
@@ -37,6 +43,7 @@ Get merchant packages from [GitHub Releases](https://github.com/simiyu-samuel/Pr
 - Customer status polling; native PrestaShop order confirmation; M-PESA receipt attached to the order payment.
 - An admin payment list, status checks, lost-response recovery, and a protected reconciliation endpoint for hosting schedulers.
 - Installation schema and upgrade handling. Financial records survive uninstall/reinstall.
+- Original SIMIPAY icon, developer attribution and packaged authorship credits. Branding loads from the shop itself, with no external tracking or activation service.
 
 ## For contributors
 
@@ -70,6 +77,6 @@ docs/                 Merchant, contributor and release documentation
 
 ## License and credits
 
-[MIT](LICENSE). Created by Samuel Simiyu; contributions are welcome. This is an independent community module, not an official PrestaShop or Kopo Kopo product.
+[MIT](LICENSE). Created by **[Samuel Simiyu](https://simiyu-samuel.vercel.app/)**; contributions are welcome. See [AUTHORS.md](AUTHORS.md), [NOTICE](NOTICE), and the [branding and provenance guide](docs/branding.md). This is an independent community module; no official PrestaShop, Kopo Kopo or M-PESA endorsement or certification is claimed.
 
 Payment contract: [Kopo Kopo API documentation](https://api-docs.kopokopo.com/). Platform integration: [PrestaShop payment modules](https://devdocs.prestashop-project.org/9/modules/payment/) and [native one-page checkout](https://devdocs.prestashop-project.org/9/modules/checkout/module-developers/).

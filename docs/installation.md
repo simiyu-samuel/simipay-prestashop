@@ -1,5 +1,7 @@
 # Installation and configuration
 
+**SIMIPAY (M-PESA)** is developed and maintained by [Samuel Simiyu](https://simiyu-samuel.vercel.app/). Its technical module name and ZIP prefix are `kopokopo`.
+
 No code editing or Composer is needed. Your host handles [server requirements](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/blob/main/docs/requirements.md); you configure the module in PrestaShop.
 
 ## 1. Prepare the shop
@@ -16,7 +18,7 @@ No code editing or Composer is needed. Your host handles [server requirements](h
 1. Download `kopokopo-<version>.zip` from this project's GitHub release assets. Do not select GitHub's “Source code” ZIP.
 2. In the PrestaShop back office, open **Modules > Module Manager > Upload a module**.
 3. Select the ZIP. Its top-level folder is `kopokopo/`; leave the ZIP intact for this upload.
-4. Find **Kopo Kopo M-PESA** and select **Configure**. If installation reports unmet requirements, ask your host to fix those requirements first.
+4. Find **SIMIPAY (M-PESA)** and select **Configure**. If installation reports unmet requirements, ask your host to fix those requirements first.
 
 If your hosting upload limit prevents ZIP upload, ask the host to raise the limit. An alternative is extracting the package into the store's `modules/` directory, retaining the `kopokopo` folder name, and installing it through Module Manager.
 
@@ -33,12 +35,14 @@ Access tokens and expiry times are managed automatically. Do not enter them manu
 ## 4. Check checkout and callbacks
 
 1. Place a staging order with KES currency and select **Pay with M-PESA**.
-2. Enter a Kenyan mobile number. Approve the sandbox scenario using Kopo Kopo's sandbox instructions; sandbox behavior is controlled by the provider.
+2. Enter a Kenyan test mobile number and follow Kopo Kopo's sandbox instructions. The sandbox simulates payments; no money moves and no phone PIN prompt is sent. Only production sends the actual M-PESA prompt.
 3. Watch the payment-status page. It should confirm the order only after a verified provider success.
 4. Check the PrestaShop order, amount, M-PESA receipt, stock and confirmation email. Duplicate delivery must not create a second order.
 5. Test rejection/failure and delayed confirmation, plus the store's actual theme/checkout. Follow the complete checklist in `docs/testing.md` in the repository.
 
 The callback URL is attached automatically to each payment request. You do not edit a PHP file or manually create a webhook subscription for this STK callback flow. The host must allow its public HTTPS route and signature header.
+
+Our local sandbox acceptance used `K000000` for the provider's forced failure and `1234567` for a successful simulation. These are sandbox test values, not production till credentials. For production, use your own eligible till supplied by Kopo Kopo. See the [provider sandbox guide](https://developers.kopokopo.com/guides/sandbox-setup/).
 
 ## 5. Enable recovery checks
 
@@ -55,6 +59,10 @@ Callbacks confirm payments normally. Scheduled reconciliation checks requests th
 5. Perform a controlled live acceptance payment and verify the order and receipt before opening the method to customers.
 
 Do not change an environment's credentials or till while it has unresolved payment attempts. Resolve those attempts first so callbacks remain verifiable. Do not disable/uninstall the module while requests are unresolved: PrestaShop does not dispatch module controllers for disabled modules.
+
+## Upgrading from 2.0.0 to 2.0.1
+
+Back up the shop, upload `kopokopo-2.0.1.zip` through Module Manager and run the offered upgrade. The display name becomes **SIMIPAY (M-PESA)** and the branding asset hook is registered. Credentials, payment history, existing orders, callback routes and the `kopokopo` folder name are retained. No reconfiguration is required for this branding upgrade.
 
 ## Upgrading from 1.0.0
 

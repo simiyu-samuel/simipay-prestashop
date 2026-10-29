@@ -30,7 +30,7 @@ Always compare the module's payment reference with Kopo Kopo's incoming-payment 
 
 ## Check a pending request
 
-Open **Modules > Module Manager > Kopo Kopo M-PESA > Configure**. Copy the reference from **Recent payment attempts**, enter it under **Payment recovery**, and select **Check provider status**. The protected scheduler uses the same verification path.
+Open **Modules > Module Manager > SIMIPAY (M-PESA) > Configure**. Copy the reference from **Recent payment attempts**, enter it under **Payment recovery**, and select **Check provider status**. The protected scheduler uses the same verification path.
 
 ## Recover a lost initiation response
 

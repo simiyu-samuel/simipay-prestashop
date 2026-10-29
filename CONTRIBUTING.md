@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for improving this community module. Bug fixes, documentation, translations, features and additional compatibility are welcome.
+Thank you for improving **SIMIPAY (M-PESA)**, created and maintained by [Samuel Simiyu](https://simiyu-samuel.vercel.app/). Bug fixes, documentation, translations, features and additional compatibility are welcome.
 
 ## Supported baseline
 
@@ -24,6 +24,8 @@ Keep API transport, domain rules and PrestaShop integration separate. Maintain c
 Escape template values, use translated merchant/customer strings, and never log credentials or complete callback payloads. Do not commit `vendor/`, generated ZIPs, credentials, customer data or runtime logs. Add schema changes through explicit versioned migrations; never reset financial tables as an upgrade shortcut.
 
 Keep commits focused and explain the user-visible outcome. A PR should describe the problem, final behavior, tests performed, and any compatibility limitation. Do not claim a provider integration passed sandbox testing without actually exercising it.
+
+Follow the [branding and provenance guide](docs/branding.md). Keep the stable technical module name `kopokopo`, package the license and authorship credits, and acknowledge contributors in release notes.
 
 ## Features and compatibility
 

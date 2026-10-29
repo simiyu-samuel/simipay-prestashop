@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">SIMIPAY</title>
+  <desc id="desc">Original SIMIPAY S mark by Samuel Simiyu</desc>
+  <rect width="128" height="128" rx="28" fill="#146b45"/>
+  <path d="M 86,31 H 57 C 27,31 25,64 50,72 L 74,79 C 81,82 80,87 71,87 H 42 V 101 H 71 C 99,101 106,71 78,65 L 55,58 C 45,55 47,45 57,45 H 86 Z" fill="#ffffff"/>
+  <circle cx="96" cy="27" r="7" fill="#b4f3ce"/>
+</svg>

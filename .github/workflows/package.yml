@@ -1,4 +1,4 @@
-name: Build merchant ZIP
+name: Release merchant ZIP
 on:
   workflow_dispatch:
   push:
@@ -6,7 +6,29 @@ on:
 permissions:
   contents: read
 jobs:
+  checks:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, json, openssl, zip, simplexml
+          coverage: none
+          tools: composer:v2
+      - run: composer --working-dir=kopokopo --no-plugins --no-scripts validate --strict
+      - run: php scripts/check.php
+      - run: php tests/run.php
+      - run: php tests/settings.php
+      - run: node --check kopokopo/views/js/status.js
   package:
+    needs: checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -17,9 +39,6 @@ jobs:
           php-version: '8.4'
           extensions: curl, json, openssl, zip, simplexml
           coverage: none
-      - run: php scripts/check.php
-      - run: php tests/run.php
-      - run: php tests/settings.php
       - name: Check tag matches module version
         if: startsWith(github.ref, 'refs/tags/')
         env:
@@ -34,3 +53,40 @@ jobs:
             dist/*.zip
             dist/*.sha256
           if-no-files-found: error
+  publish:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: kopokopo-merchant-package
+          path: dist
+      - name: Publish installable pre-release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${RELEASE_TAG#v}"
+          notes="docs/releases/${RELEASE_TAG}.md"
+          archive="dist/kopokopo-${version}.zip"
+          checksum="${archive}.sha256"
+          test -f "$notes"
+          test -f "$archive"
+          test -f "$checksum"
+          (cd dist && sha256sum -c "kopokopo-${version}.zip.sha256")
+          if gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft > /tmp/simipay-release-draft; then
+            test "$(cat /tmp/simipay-release-draft)" = true || { echo 'A public release already exists; refusing to replace its assets.'; exit 1; }
+            gh release upload "$RELEASE_TAG" "$archive" "$checksum" --clobber
+          else
+            gh release create "$RELEASE_TAG" "$archive" "$checksum" --verify-tag --draft --prerelease --title "SIMIPAY (M-PESA) ${RELEASE_TAG}" --notes-file "$notes"
+          fi
+          gh release edit "$RELEASE_TAG" --draft=false --prerelease
