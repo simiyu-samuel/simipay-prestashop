@@ -33,6 +33,14 @@ The disposable database name must contain `test` or `ci`. For HTTP boundary chec
 
 Never set these variables to a live or client shop. See `docs/validation.md` for the exact local results and known remaining checks.
 
+For an already installed and initialized disposable shop, the admin token regression can run separately:
+
+```sh
+KOPOKOPO_TEST_SHOP=/absolute/path/to/disposable/prestashop php tests/admin-form.php
+```
+
+It exercises the real module handler with Symfony's real masked CSRF tokens and an isolated in-memory token store. Both masks must validate; foreign-employee, malformed, empty and non-string tokens must fail. An unknown action avoids settings changes and provider requests. The database name must contain `demo`, `test` or `ci`.
+
 ## Staging acceptance before production release
 
 For a demonstration that follows the client's ZIP upload and configuration process, use the [merchant walkthrough](merchant-walkthrough.md).

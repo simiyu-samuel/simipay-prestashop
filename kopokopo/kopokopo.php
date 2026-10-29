@@ -13,6 +13,8 @@ use SimiyuSamuel\Kopokopo\Domain\Webhook;
 use SimiyuSamuel\Kopokopo\Infrastructure\AttemptRepository;
 use SimiyuSamuel\Kopokopo\Infrastructure\Settings;
 use SimiyuSamuel\Kopokopo\Infrastructure\ShopOrders;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class Kopokopo extends PaymentModule
 {
@@ -219,7 +221,11 @@ class Kopokopo extends PaymentModule
             $settings->initialize();
             if (Tools::isSubmit('kopokopo_action')) {
                 $token = Tools::getValue('form_token');
-                if (!is_string($token) || !hash_equals(Tools::getAdminTokenLite('AdminModules'), $token)) {
+                // Symfony masks its CSRF tokens differently on each request. Validate
+                // against the session token, rather than comparing their masked strings.
+                $tokenManager = $this->get(CsrfTokenManagerInterface::class);
+                if (!is_string($token) || !$tokenManager instanceof CsrfTokenManagerInterface
+                    || !$tokenManager->isTokenValid(new CsrfToken($employee->email, $token))) {
                     throw new PaymentException('Your settings form expired. Reload the page.', 403);
                 }
                 if ($this->requirements()) {

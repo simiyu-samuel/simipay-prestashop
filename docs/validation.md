@@ -17,6 +17,8 @@ Recorded 29 October 2026 for the version 2.0.0 candidate.
 | Native checkout preferences | Direct initiation honors the native payment-option restrictions; disabling the test carrier is rejected |
 | Native UI/templates | Admin configuration renders; customer and payment-return templates compile |
 | Merchant browser installation | Fresh official PrestaShop Classic 9.2.0 package; release ZIP selected in Module Manager's upload dialog; “Module installed!” displayed; Configure opens the sandbox form |
+| Real sandbox authentication | Credentials saved through the browser; Kopo Kopo OAuth authentication succeeds; saving with blank secret inputs retains credentials and authentication still succeeds |
+| Admin form CSRF | Corrected native Symfony token validation; regression accepts different masks of a valid token and rejects foreign-employee, malformed, empty and non-string tokens |
 | Public demo HTTPS/access rules | Apache 2.4.66 behind ngrok HTTPS; configuration/log/implementation/documentation requests return 403, public module JavaScript returns 200 |
 | Idempotency and storage | Duplicate initiation/callback protection, cross-connection named-lock exclusion/release, and provider-request uniqueness pass |
 | Native upgrade | Core upgrade runner discovers and executes the 1.0.0 → 2.0.0 migration; legacy log/credentials/footer hook cleanup verified |
@@ -26,11 +28,13 @@ Recorded 29 October 2026 for the version 2.0.0 candidate.
 
 The real-platform smoke test caught and drove fixes for cart flag normalization (`"0"` versus `0`) and repeated registration of a legacy hook alias. Those checks remain in the integration suite.
 
-Provider results in the domain/platform/HTTP tests are synthetic. The loopback HTTP test simulates TLS termination in a test-only router. A separate browser rehearsal used the official Classic 9.2.0-6.0 package, Hummingbird 2.1.2, PHP 8.4.16, MariaDB 10.4.34 and Apache behind a public ngrok HTTPS tunnel. The merchant ZIP upload and configuration screen passed. Access checks for `app/config/parameters.php`, a real application log, module implementation and module documentation returned 403; public module JavaScript returned 200. These checks cover this demo setup and do not certify a client's hosting or actual Kopo Kopo callback delivery. The demo has sample data and outgoing email disabled; provider credentials have not been entered.
+Provider results in the domain/platform/HTTP tests are synthetic. The loopback HTTP test simulates TLS termination in a test-only router. A separate browser rehearsal used the official Classic 9.2.0-6.0 package, Hummingbird 2.1.2, PHP 8.4.16, MariaDB 10.4.34 and Apache behind a public ngrok HTTPS tunnel. The merchant ZIP upload and configuration screen passed. Access checks for `app/config/parameters.php`, a real application log, module implementation and module documentation returned 403; public module JavaScript returned 200. These checks cover this demo setup and do not certify a client's hosting or actual Kopo Kopo callback delivery. The demo has sample data and outgoing email disabled. Real sandbox credentials have now been saved through the admin form and OAuth authentication succeeds, including after saving again with blank secret fields. The temporary till is `K000000`, the sandbox's failure-simulation till; no payment request has been initiated with these credentials.
+
+The browser save exposed an admin CSRF defect that rendering alone did not catch: masked Symfony tokens differ between requests and cannot be checked with string equality. The module now delegates verification to the native CSRF manager for the logged-in employee. `tests/admin-form.php` covers acceptance and rejection cases without changing shop settings or sending payments.
 
 ## Still required before production release
 
-- Real Kopo Kopo sandbox authentication, STK success/failure and signed callback delivery for the merchant's account/till.
+- Real Kopo Kopo sandbox STK success/failure and signed callback delivery for the merchant's account/till. OAuth authentication is verified separately above.
 - Full browser checkout acceptance on standard checkout and the native one-page checkout, including guest/registered customers, stock/email behavior, and the client's actual theme or checkout customization.
 - Hosting-specific HTTPS/firewall/cache/scheduler and sensitive-file access verification.
 - The configured PHP 8.2/8.3/8.4/8.5 GitHub Actions matrix actually running and passing after the commits are pushed. Local evidence here covers PHP 8.4.16 only.
