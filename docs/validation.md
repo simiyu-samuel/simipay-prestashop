@@ -1,6 +1,6 @@
 # Validation record
 
-Recorded 29 October 2026 for the version 2.0.1 candidate. Core browser/provider acceptance below used 2.0.0; branding/package changes have passed local automated checks, while a 2.0.1 browser/upgrade rehearsal has not been completed.
+Recorded 29 October 2026 for the version 2.0.1 candidate. Core browser/provider acceptance below used 2.0.0; branding/package changes have passed local checks and the GitHub PHP 8.2–8.5 matrix, while a 2.0.1 browser/upgrade rehearsal has not been completed.
 
 ## Completed locally
 
@@ -10,6 +10,7 @@ Recorded 29 October 2026 for the version 2.0.1 candidate. Core browser/provider 
 | Payment/domain/API adapter tests | 24 tests pass on PHP 8.4.16 |
 | Configuration encryption tests | Round-trip, initialization, tampering and environment/shop isolation pass |
 | Composer metadata | Strict validation passes; no third-party runtime dependencies |
+| GitHub release checks | PHP 8.2, 8.3, 8.4 and 8.5 checks, packaging and publication passed in [run 40914332014](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/actions/runs/40914332014) |
 | Merchant package | Correct `kopokopo/` root, required files, exclusions, deterministic rebuild and SHA-256 checks pass |
 | Front-end script | JavaScript syntax check passes |
 | PrestaShop integration | Real PrestaShop 9.2.0, PHP 8.4.16, MariaDB 10.4.34 and official Hummingbird 2.1.2 |
@@ -42,7 +43,8 @@ The browser save exposed an admin CSRF defect that rendering alone did not catch
 - Version 2.0.1 branding display and upgrade from 2.0.0 in the browser. The browser rehearsal was stopped at the maintainer's request; no visual or upgrade success is claimed for that change.
 - Full browser checkout acceptance on standard checkout and the native one-page checkout, including guest/registered customers, stock/email behavior, and the client's actual theme or checkout customization.
 - Hosting-specific HTTPS/firewall/cache/scheduler and sensitive-file access verification.
-- The configured PHP 8.2/8.3/8.4/8.5 GitHub Actions matrix actually running and passing after the commits are pushed. Local evidence here covers PHP 8.4.16 only.
 - Maintainer release review and a controlled live acceptance payment before general availability.
 
-A real API request and signed callback were exercised in the provider's sandbox, which simulates payments without a phone PIN prompt or real money movement. No production payment, transfer or refund was sent. The release is an installable pre-release, not a claim of completed production acceptance. Publishing status and attached assets must be verified on GitHub; a local build or tag alone is not publication.
+A real API request and signed callback were exercised in the provider's sandbox, which simulates payments without a phone PIN prompt or real money movement. No production payment, transfer or refund was sent. The release is an installable pre-release, not a claim of completed production acceptance. The public [v2.0.1 pre-release](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/tag/v2.0.1) contains the merchant ZIP and checksum. Both public assets were downloaded after publication and verified for checksum, module identity, version, credits and the single `kopokopo/` root. The immutable tag identifies source commit `9eed3fa`; this post-publication record does not move that tag.
+
+Published ZIP SHA-256: `247b5fc2ca1ce244cae769324ba9b4acfe45a3e0a12926ac2a0a21b69195acf1`.
