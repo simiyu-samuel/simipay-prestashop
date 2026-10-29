@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Installation and recovery guide
-    url: https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/blob/main/docs/installation.md
+    url: https://github.com/simiyu-samuel/simipay-prestashop/blob/main/docs/installation.md
     about: Check installation, configuration and server requirements first.
   - name: Security reporting
-    url: https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/blob/main/SECURITY.md
+    url: https://github.com/simiyu-samuel/simipay-prestashop/blob/main/SECURITY.md
     about: Report vulnerabilities privately, without posting secrets in an issue.

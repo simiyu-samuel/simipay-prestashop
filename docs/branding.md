@@ -5,6 +5,7 @@
 | Context | Name |
 | --- | --- |
 | Project and Module Manager | **SIMIPAY (M-PESA)** |
+| GitHub repository | [`simiyu-samuel/simipay-prestashop`](https://github.com/simiyu-samuel/simipay-prestashop) |
 | Customer payment option | **Pay with M-PESA** |
 | Developer and maintainer | **Samuel Simiyu** |
 | Customer attribution | **Powered by Samuel Simiyu** |

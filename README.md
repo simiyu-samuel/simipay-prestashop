@@ -32,7 +32,7 @@ PrestaShop 8, PHP 8.1 and earlier, multistore, other currencies, custom checkout
 3. Run the [checkout acceptance checklist](docs/testing.md) in staging and sandbox.
 4. Use [troubleshooting and payment recovery](docs/troubleshooting.md) if needed.
 
-Download **[kopokopo-2.0.2.zip](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/download/v2.0.2/kopokopo-2.0.2.zip)** from the **[SIMIPAY 2.0.2 pre-release](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/tag/v2.0.2)**. This is the module ready for upload, **not** GitHub's automatically generated “Source code” ZIP. Other versions are listed under [GitHub Releases](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases). Maintainers can build the package with `php scripts/build.php`.
+Download **[kopokopo-2.0.2.zip](https://github.com/simiyu-samuel/simipay-prestashop/releases/download/v2.0.2/kopokopo-2.0.2.zip)** from the **[SIMIPAY 2.0.2 pre-release](https://github.com/simiyu-samuel/simipay-prestashop/releases/tag/v2.0.2)**. This is the module ready for upload, **not** GitHub's automatically generated “Source code” ZIP. Other versions are listed under [GitHub Releases](https://github.com/simiyu-samuel/simipay-prestashop/releases). Maintainers can build the package with `php scripts/build.php`.
 
 ## What the module handles
 

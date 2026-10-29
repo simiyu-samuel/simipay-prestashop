@@ -2,7 +2,7 @@
 
 **SIMIPAY (M-PESA)** is developed and maintained by [Samuel Simiyu](https://simiyu-samuel.vercel.app/). Its technical module name and ZIP prefix are `kopokopo`.
 
-No code editing or Composer is needed. Your host handles [server requirements](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/blob/main/docs/requirements.md); you configure the module in PrestaShop.
+No code editing or Composer is needed. Your host handles [server requirements](https://github.com/simiyu-samuel/simipay-prestashop/blob/main/docs/requirements.md); you configure the module in PrestaShop.
 
 ## 1. Prepare the shop
 

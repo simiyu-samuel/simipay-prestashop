@@ -15,8 +15,8 @@ The original integration/demo setup explicitly added `PS_SSL_ENABLED_EVERYWHERE`
 | Configuration encryption tests | Round-trip, initialization, tampering and environment/shop isolation pass |
 | PrestaShop 9 SSL regression | Fast guard/install/upgrade tests and the native 9.2.0 configuration reader accept SSL enabled with the removed key absent/stale; SSL disabled is rejected |
 | Composer metadata | Strict validation passes; no third-party runtime dependencies |
-| GitHub release checks | PHP 8.2, 8.3, 8.4 and 8.5 checks, packaging and publication passed in [run 40914332014](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/actions/runs/40914332014) |
-| SSL patch release checks | Version 2.0.2 PHP 8.2–8.5 checks, packaging and publication passed in [run 40916474008](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/actions/runs/40916474008) |
+| GitHub release checks | PHP 8.2, 8.3, 8.4 and 8.5 checks, packaging and publication passed in [run 40914332014](https://github.com/simiyu-samuel/simipay-prestashop/actions/runs/40914332014) |
+| SSL patch release checks | Version 2.0.2 PHP 8.2–8.5 checks, packaging and publication passed in [run 40916474008](https://github.com/simiyu-samuel/simipay-prestashop/actions/runs/40916474008) |
 | Merchant package | Correct `kopokopo/` root, required files, exclusions, deterministic rebuild and SHA-256 checks pass |
 | Front-end script | JavaScript syntax check passes |
 | PrestaShop integration | Real PrestaShop 9.2.0, PHP 8.4.16, MariaDB 10.4.34 and official Hummingbird 2.1.2 |
@@ -51,12 +51,16 @@ The browser save exposed an admin CSRF defect that rendering alone did not catch
 - Hosting-specific HTTPS/firewall/cache/scheduler and sensitive-file access verification.
 - Maintainer release review and a controlled live acceptance payment before general availability.
 
-A real API request and signed callback were exercised in the provider's sandbox, which simulates payments without a phone PIN prompt or real money movement. No production payment, transfer or refund was sent. The release is an installable pre-release, not a claim of completed production acceptance. The public [v2.0.1 pre-release](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/tag/v2.0.1) contains the merchant ZIP and checksum. Both public assets were downloaded after publication and verified for checksum, module identity, version, credits and the single `kopokopo/` root. The immutable tag identifies source commit `9eed3fa`; this post-publication record does not move that tag.
+A real API request and signed callback were exercised in the provider's sandbox, which simulates payments without a phone PIN prompt or real money movement. No production payment, transfer or refund was sent. The release is an installable pre-release, not a claim of completed production acceptance. The public [v2.0.1 pre-release](https://github.com/simiyu-samuel/simipay-prestashop/releases/tag/v2.0.1) contains the merchant ZIP and checksum. Both public assets were downloaded after publication and verified for checksum, module identity, version, credits and the single `kopokopo/` root. The immutable tag identifies source commit `9eed3fa`; this post-publication record does not move that tag.
 
 Published ZIP SHA-256: `247b5fc2ca1ce244cae769324ba9b4acfe45a3e0a12926ac2a0a21b69195acf1`.
 
 ## Published SSL correction
 
-The [v2.0.2 pre-release](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/tag/v2.0.2) supersedes 2.0.1 for installation. Its immutable tag identifies source commit `e8915a2`. Both public assets were downloaded after publication; the ZIP has 58 entries under the single `kopokopo/` root, is 48,399 bytes, and every entry matches the reviewed local build byte-for-byte. Its checksum verifies, and the packaged requirements guard contains the corrected SSL check. No browser branding/upgrade rehearsal or production acceptance is implied by these checks.
+The [v2.0.2 pre-release](https://github.com/simiyu-samuel/simipay-prestashop/releases/tag/v2.0.2) supersedes 2.0.1 for installation. Its immutable tag identifies source commit `e8915a2`. Both public assets were downloaded after publication; the ZIP has 58 entries under the single `kopokopo/` root, is 48,399 bytes, and every entry matches the reviewed local build byte-for-byte. Its checksum verifies, and the packaged requirements guard contains the corrected SSL check. No browser branding/upgrade rehearsal or production acceptance is implied by these checks.
 
 Published **2.0.2** ZIP SHA-256: `1aa16a130cbdbdc39df454a1a3388e6dffc9956c4ebfb403ffde2c83fa656ac2`.
+
+## Repository rename
+
+The canonical repository is now [`simiyu-samuel/simipay-prestashop`](https://github.com/simiyu-samuel/simipay-prestashop). Maintained source/docs links, Composer metadata, issue contact links, the admin installation-guide link, both published release descriptions and the local Git remote were updated. Published tags and assets were retained. Both versions' ZIP and checksum downloads were verified through the new repository URLs against the original SHA-256 values above; the previous 2.0.2 download URL was also checked and still resolves to the original ZIP. The release workflow already derives its repository from `github.repository`. The technical module identifier remains `kopokopo`. Composer strict validation, PHP syntax/manifest checks and the check for remaining old-name references in tracked files passed.

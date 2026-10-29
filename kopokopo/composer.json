@@ -1,11 +1,11 @@
 {
   "name": "samuelsimiyu/kopokopo",
   "description": "SIMIPAY (M-PESA) by Samuel Simiyu: Kopo Kopo API v2 checkout for PrestaShop 9.2",
-  "homepage": "https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module",
+  "homepage": "https://github.com/simiyu-samuel/simipay-prestashop",
   "authors": [{"name": "Samuel Simiyu", "homepage": "https://simiyu-samuel.vercel.app/", "role": "Developer and maintainer"}],
   "support": {
-    "issues": "https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/issues",
-    "source": "https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module"
+    "issues": "https://github.com/simiyu-samuel/simipay-prestashop/issues",
+    "source": "https://github.com/simiyu-samuel/simipay-prestashop"
   },
   "type": "prestashop-module",
   "license": "MIT",

@@ -8,7 +8,7 @@
     </div>
   </div>
   <p>{l s='PrestaShop 9.2 · PHP 8.2–8.5 · KES · single store. No code editing or Composer installation is required.' mod='kopokopo'}</p>
-  <p><a href="https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/blob/main/docs/installation.md" target="_blank" rel="noopener noreferrer">{l s='Installation and configuration guide' mod='kopokopo'}</a></p>
+  <p><a href="https://github.com/simiyu-samuel/simipay-prestashop/blob/main/docs/installation.md" target="_blank" rel="noopener noreferrer">{l s='Installation and configuration guide' mod='kopokopo'}</a></p>
   {foreach $requirements as $requirement}<p class="alert alert-danger">{$requirement|escape:'html':'UTF-8'}</p>{/foreach}
   <form method="post" action="{$form_action|escape:'html':'UTF-8'}">
     <input type="hidden" name="form_token" value="{$form_token|escape:'html':'UTF-8'}">
