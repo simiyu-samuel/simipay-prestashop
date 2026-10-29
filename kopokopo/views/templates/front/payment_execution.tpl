@@ -1,20 +1,19 @@
 {extends file='page.tpl'}
-
+{block name='page_title'}{l s='Pay with M-PESA' mod='kopokopo'}{/block}
 {block name='page_content'}
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <form action="{$action_url}" method="post">
-                <div class="form-group">
-                    <label for="phone_number">Mpesa Phone Number</label>
-                    <input type="text" class="form-control" id="phone_number" name="phone_number" required>
-                    <input type="hidden" name="order_id" value="{$order_id}">
-                </div>
-                <div>
-                    <button type='submit' class='btn btn-primary'>PAY</button>
-                </div>
-            </form>
-        </div>
+<section class="card card-block">
+  {if $sandbox}<p class="alert alert-info">{l s='Sandbox mode: this checkout is for testing.' mod='kopokopo'}</p>{/if}
+  <p>{l s='Amount to pay:' mod='kopokopo'} <strong>{$payment_total|escape:'html':'UTF-8'}</strong></p>
+  <p>{l s='Enter your Kenyan mobile number. You will receive an M-PESA prompt on your phone. Enter your PIN on your phone only.' mod='kopokopo'}</p>
+  <form action="{$payment_action|escape:'html':'UTF-8'}" method="post">
+    <input type="hidden" name="form_token" value="{$form_token|escape:'html':'UTF-8'}">
+    <div class="form-group">
+      <label for="kopokopo-phone">{l s='M-PESA phone number' mod='kopokopo'}</label>
+      <input class="form-control" id="kopokopo-phone" type="tel" name="phone_number" inputmode="tel"
+        autocomplete="tel" placeholder="0712345678" maxlength="24" aria-describedby="kopokopo-phone-help" required>
+      <small id="kopokopo-phone-help">{l s='Accepted formats: 07…, 01…, 254… or +254…' mod='kopokopo'}</small>
     </div>
-</div>
+    <button class="btn btn-primary" type="submit">{l s='Send M-PESA prompt' mod='kopokopo'}</button>
+  </form>
+</section>
 {/block}

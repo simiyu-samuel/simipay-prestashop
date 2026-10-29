@@ -1,49 +1,38 @@
 <?php
+use SimiyuSamuel\Kopokopo\Domain\PaymentException;
+use SimiyuSamuel\Kopokopo\Infrastructure\AttemptRepository;
 
 class KopokopoProcessModuleFrontController extends ModuleFrontController
 {
-    public function initContent()
+    public $ssl = true;
+
+    public function postProcess()
     {
-        parent::initContent();
-
-        // Retrieve the order ID and phone number from the request
-        $orderId = Tools::getValue('order_id');
-        $phoneNumber = Tools::getValue('phone_number');
-        
-        // Check if phone number is provided
-        // if (!$phoneNumber) {
-        //     $this->context->smarty->assign('error', $this->module->l('Please enter your phone number.'));
-        //     $this->setTemplate('module:kopokopo/views/templates/front/payment_execution.tpl');
-        //     return;
-        // }
-
-        $action_url = $this->context->link->getModuleLink($this->module->name, 'process', [], true);
-        // Retrieve cart and customer details
-        $cart = $this->context->cart;
-        $customer = new Customer($cart->id_customer);
-        $amount = $cart->getOrderTotal(true, Cart::BOTH);
-        $currency = $this->context->currency->iso_code;
-        $email = $customer->email;
-        $firstName = $customer->firstname;
-        $lastName = $customer->lastname;
-        $cartId = $this->context->cart->id;
-        $currencyId = $this->context->currency->id;
-
-        // Initiate the payment process
-        $paymentUrl = $this->module->initiatePayment($amount, $currency, $phoneNumber, $email, $firstName, $lastName, $orderId, $currencyId);
-        $paymentstatusUrl = $this->context->link->getModuleLink($this->module->name, 'paymentstatus', [], true);
-        
-        if ($paymentUrl) {
-            // Payment initiation was successful
-            $this->context->smarty->assign('success', $this->module->l('Payment initiated successfully. Please wait for the confirmation.'));
-            $this->context->smarty->assign('order_Id', $orderId);
-            $this->context->smarty->assign('p_url', $paymentstatusUrl);
-            $this->setTemplate('module:kopokopo/views/templates/front/payment_completion.tpl');
-        } else {
-            // Assign error message if payment initiation failed
-            $this->context->smarty->assign('error', $this->module->l('Payment initiation failed. Please try again.'));
-            $this->context->smarty->assign('action_url', $action_url);
-            $this->setTemplate('module:kopokopo/views/templates/front/payment_execution.tpl');
+        try {
+            if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+                throw new PaymentException('Please submit the payment form.', 405);
+            }
+            $this->module->assertCheckout();
+            $this->module->assertCsrf();
+            $phone = Tools::getValue('phone_number', '');
+            if (!is_string($phone)) {
+                throw new PaymentException('Enter a valid phone number.');
+            }
+            // Cart identity, customer, amount, currency, and callback are never taken from POST.
+            $attempt = $this->module->payments()->initiate((int) $this->context->cart->id,
+                (int) $this->context->customer->id, $phone,
+                fn (string $id): string => $this->context->link->getModuleLink('kopokopo', 'callback', ['attempt' => $id], true));
+            Tools::redirect($this->context->link->getModuleLink('kopokopo', 'paymentstatus', ['attempt' => $attempt['id']], true));
+        } catch (PaymentException $exception) {
+            $this->errors[] = $this->module->l($exception->getMessage());
+        } catch (Throwable) {
+            // A persisted attempt may already have been sent; return to its status instead of inviting another payment.
+            $attempt = (new AttemptRepository())->openForCart((int) $this->context->shop->id, (int) $this->context->cart->id);
+            if ($attempt && (int) $attempt['customer_id'] === (int) $this->context->customer->id) {
+                Tools::redirect($this->context->link->getModuleLink('kopokopo', 'paymentstatus', ['attempt' => $attempt['id']], true));
+            }
+            $this->errors[] = $this->module->l('Payment could not start. Please contact the merchant.');
         }
+        $this->redirectWithNotifications($this->context->link->getModuleLink('kopokopo', 'payment', [], true));
     }
 }

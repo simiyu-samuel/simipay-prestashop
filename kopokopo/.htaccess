@@ -1,0 +1,9 @@
+# Static assets remain public; implementation, templates, and historical logs do not.
+<FilesMatch "\.(php|tpl|json|lock|log|txt|md)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
+</FilesMatch>
