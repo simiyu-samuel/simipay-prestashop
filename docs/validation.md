@@ -1,6 +1,10 @@
 # Validation record
 
-Recorded 29 October 2026 for the version 2.0.1 candidate. Core browser/provider acceptance below used 2.0.0; branding/package changes have passed local checks and the GitHub PHP 8.2–8.5 matrix, while a 2.0.1 browser/upgrade rehearsal has not been completed.
+Recorded 29 October 2026, updated for the version 2.0.2 SSL fix. Core browser/provider acceptance below used 2.0.0; the 2.0.1 branding/package changes passed local checks and the GitHub PHP 8.2–8.5 matrix. The 2.0.2 SSL guard passed fast regression tests and a read-only native PrestaShop 9.2.0 check; a fresh 2.0.2 browser installation/upgrade has not been rehearsed.
+
+## Correction to earlier HTTPS validation
+
+The original integration/demo setup explicitly added `PS_SSL_ENABLED_EVERYWHERE`, which PrestaShop 9 removed. This masked a module bug: normal shops with only `PS_SSL_ENABLED` were incorrectly rejected. Version 2.0.2 requires the native SSL setting alone. The new regression failed against the earlier guard and passes with the fix, including missing/stale legacy-key cases and rejection of disabled SSL. `tests/platform-requirements.php` also passed on the real local PrestaShop 9.2.0/PHP 8.4.16 setup with changes confined to in-process configuration caches. No database settings or payment data were changed. The destructive fixture now removes, rather than adds, the obsolete key. Earlier browser installation results therefore do not establish that the older packages install correctly on an unmodified fresh PrestaShop 9 shop.
 
 ## Completed locally
 
@@ -9,6 +13,7 @@ Recorded 29 October 2026 for the version 2.0.1 candidate. Core browser/provider 
 | Module, tests and build scripts | PHP syntax checks pass |
 | Payment/domain/API adapter tests | 24 tests pass on PHP 8.4.16 |
 | Configuration encryption tests | Round-trip, initialization, tampering and environment/shop isolation pass |
+| PrestaShop 9 SSL regression | Fast guard/install/upgrade tests and the native 9.2.0 configuration reader accept SSL enabled with the removed key absent/stale; SSL disabled is rejected |
 | Composer metadata | Strict validation passes; no third-party runtime dependencies |
 | GitHub release checks | PHP 8.2, 8.3, 8.4 and 8.5 checks, packaging and publication passed in [run 40914332014](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/actions/runs/40914332014) |
 | Merchant package | Correct `kopokopo/` root, required files, exclusions, deterministic rebuild and SHA-256 checks pass |

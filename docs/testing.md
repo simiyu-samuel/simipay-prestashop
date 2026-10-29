@@ -8,6 +8,7 @@ Run from the repository root with PHP 8.2–8.5:
 php scripts/check.php
 php tests/run.php
 php tests/settings.php
+php tests/requirements.php
 php scripts/build.php
 php tests/package.php
 node --check kopokopo/views/js/status.js
@@ -16,7 +17,7 @@ composer --working-dir=kopokopo --no-plugins --no-scripts validate --strict
 
 Node and Composer are contributor tools, not merchant installation dependencies. The configured GitHub Actions matrix runs the fast tests on PHP 8.2, 8.3, 8.4 and 8.5. A configured workflow is not evidence that a remote run passed.
 
-The domain suite uses fake provider/PrestaShop boundaries and no real credentials or payments. It covers exact amounts, phone formatting, raw-body signatures, resource URL restrictions, ownership, duplicate initiation, failed/ambiguous outcomes, duplicate/late callbacks, interrupted completion and reconciliation. Settings tests exercise actual encryption and scope/tamper protection. Package checks verify its top-level directory, required files, exclusions and checksum.
+The domain suite uses fake provider/PrestaShop boundaries and no real credentials or payments. It covers exact amounts, phone formatting, raw-body signatures, resource URL restrictions, ownership, duplicate initiation, failed/ambiguous outcomes, duplicate/late callbacks, interrupted completion and reconciliation. Settings tests exercise actual encryption and scope/tamper protection. Requirements tests accept the native PrestaShop 9 SSL setting with the legacy key absent or stale, and reject installation when SSL is disabled. Package checks verify its top-level directory, required files, exclusions and checksum.
 
 ## Disposable PrestaShop integration smoke test
 
@@ -40,6 +41,14 @@ KOPOKOPO_TEST_SHOP=/absolute/path/to/disposable/prestashop php tests/admin-form.
 ```
 
 It exercises the real module handler with Symfony's real masked CSRF tokens and an isolated in-memory token store. Both masks must validate; foreign-employee, malformed, empty and non-string tokens must fail. An unknown action avoids settings changes and provider requests. The database name must contain `demo`, `test` or `ci`.
+
+For the SSL regression against PrestaShop's native configuration reader:
+
+```sh
+KOPOKOPO_TEST_SHOP=/absolute/path/to/disposable/prestashop php tests/platform-requirements.php
+```
+
+This loads the current repository module against a disposable PrestaShop 9.2 demo/test/ci database. It changes and restores configuration caches only within the test process; database settings, installed module files and payments are untouched. The destructive integration fixture also removes any stale `PS_SSL_ENABLED_EVERYWHERE` key instead of adding it, so native installation exercises the real version 9 configuration.
 
 ## Staging acceptance before production release
 

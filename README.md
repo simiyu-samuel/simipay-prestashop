@@ -6,7 +6,7 @@ Created and maintained by **[Samuel Simiyu](https://simiyu-samuel.vercel.app/)**
 
 Accept M-PESA payments using Kopo Kopo API v2 STK Push. Customers enter a Kenyan mobile number, approve the prompt on their phone, and receive an order confirmation after the payment has been verified.
 
-**Version 2.0.1 is a release candidate.** Browser installation, real sandbox authentication, failed and successful sandbox payments, signed callbacks and native paid-order/receipt creation have been verified locally. Complete the remaining store-specific, runtime and live acceptance checks before a production release. See [validation status](docs/validation.md).
+**Version 2.0.2 is a release candidate.** It fixes the false SSL requirement error on PrestaShop 9, with fast and native-platform regression coverage. Earlier core validation verified browser installation, real sandbox authentication, failed/successful payments, signed callbacks and native paid-order/receipt creation locally. A fresh 2.0.2 browser installation/upgrade and store-specific/live acceptance remain outstanding. See [validation status](docs/validation.md).
 
 ## For merchants
 
@@ -32,7 +32,7 @@ PrestaShop 8, PHP 8.1 and earlier, multistore, other currencies, custom checkout
 3. Run the [checkout acceptance checklist](docs/testing.md) in staging and sandbox.
 4. Use [troubleshooting and payment recovery](docs/troubleshooting.md) if needed.
 
-Download **[kopokopo-2.0.1.zip](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/download/v2.0.1/kopokopo-2.0.1.zip)** from the **[SIMIPAY 2.0.1 pre-release](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/tag/v2.0.1)**. This is the module ready for upload, **not** GitHub's automatically generated “Source code” ZIP. Other versions are listed under [GitHub Releases](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases). Maintainers can build the package with `php scripts/build.php`.
+Download **[kopokopo-2.0.2.zip](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/download/v2.0.2/kopokopo-2.0.2.zip)** from the **[SIMIPAY 2.0.2 pre-release](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases/tag/v2.0.2)**. This is the module ready for upload, **not** GitHub's automatically generated “Source code” ZIP. Other versions are listed under [GitHub Releases](https://github.com/simiyu-samuel/Prestashop-Lipa-Na-Mpesa-Module/releases). Maintainers can build the package with `php scripts/build.php`.
 
 ## What the module handles
 
@@ -51,6 +51,7 @@ Download **[kopokopo-2.0.1.zip](https://github.com/simiyu-samuel/Prestashop-Lipa
 php scripts/check.php
 php tests/run.php
 php tests/settings.php
+php tests/requirements.php
 php scripts/build.php
 php tests/package.php
 ```

@@ -11,7 +11,7 @@ The maintained target for version 2 is PrestaShop 9.2.x, PHP 8.2–8.5, KES and 
 1. Fork the repository and create a focused branch.
 2. Use PHP 8.2–8.5 with cURL, JSON, OpenSSL and ZIP. There are no external runtime packages to install.
 3. Copy/symlink `kopokopo/` into an isolated PrestaShop 9.2 staging shop's `modules/` directory. Use dummy data and sandbox credentials entered through the admin configuration.
-4. Run `php scripts/check.php`, `php tests/run.php`, and `php tests/settings.php`.
+4. Run `php scripts/check.php`, `php tests/run.php`, `php tests/settings.php`, and `php tests/requirements.php`.
 5. Build with `php scripts/build.php` and verify with `php tests/package.php`. Never hand-build a release by zipping the repository root.
 6. Follow `docs/testing.md` for affected checkout and recovery flows. Record exactly which runtime/theme/checkout/provider scenarios you tested.
 

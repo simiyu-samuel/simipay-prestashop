@@ -8,7 +8,7 @@ No code editing or Composer is needed. Your host handles [server requirements](h
 
 1. Back up the store files and database.
 2. Confirm PrestaShop 9.2.x, PHP 8.2–8.5, KES currency, and single-store mode.
-3. In **Shop Parameters > General**, enable SSL and SSL on all pages.
+3. In **Shop Parameters > General**, enable SSL. PrestaShop 9 applies this to the whole shop; there is no separate “SSL on all pages” switch.
 4. Start on a staging shop with a public HTTPS URL. A local/private URL cannot receive Kopo Kopo callbacks.
 5. Obtain sandbox application credentials and the sandbox till from Kopo Kopo.
 6. In **Shipping > Carriers**, enable a delivery or collection option for your customers' delivery zone (Kenya is in **Africa** by default), customer groups and product weight/price range. Checkout needs an available carrier before it can reach payment. Sample carriers may cover only Europe or North America.
@@ -60,9 +60,11 @@ Callbacks confirm payments normally. Scheduled reconciliation checks requests th
 
 Do not change an environment's credentials or till while it has unresolved payment attempts. Resolve those attempts first so callbacks remain verifiable. Do not disable/uninstall the module while requests are unresolved: PrestaShop does not dispatch module controllers for disabled modules.
 
-## Upgrading from 2.0.0 to 2.0.1
+## Upgrading from 2.0.0 or 2.0.1 to 2.0.2
 
-Back up the shop, upload `kopokopo-2.0.1.zip` through Module Manager and run the offered upgrade. The display name becomes **SIMIPAY (M-PESA)** and the branding asset hook is registered. Credentials, payment history, existing orders, callback routes and the `kopokopo` folder name are retained. No reconfiguration is required for this branding upgrade.
+Back up the shop, upload `kopokopo-2.0.2.zip` through Module Manager and run the offered upgrade. Version 2.0.2 fixes the false SSL requirement error on PrestaShop 9; no database migration or new credentials are needed. Upgrading from 2.0.0 also applies the existing SIMIPAY branding and asset-hook upgrade. Credentials, payment history, existing orders, callback routes and the `kopokopo` folder name are retained.
+
+If an earlier installation failed with “Enable HTTPS and SSL on all pages” despite SSL being enabled, upload the 2.0.2 package and retry installation. Do not add obsolete SSL settings to the database or disable HTTPS. This error also affected manually zipped copies of the earlier module source.
 
 ## Upgrading from 1.0.0
 

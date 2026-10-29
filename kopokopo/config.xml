@@ -2,7 +2,7 @@
 <module>
   <name>kopokopo</name>
   <displayName><![CDATA[SIMIPAY (M-PESA)]]></displayName>
-  <version><![CDATA[2.0.1]]></version>
+  <version><![CDATA[2.0.2]]></version>
   <description><![CDATA[M-PESA checkout by Samuel Simiyu using Kopo Kopo API v2. PrestaShop 9.2, PHP 8.2–8.5 and HTTPS.]]></description>
   <author><![CDATA[Samuel Simiyu]]></author>
   <tab><![CDATA[payments_gateways]]></tab>

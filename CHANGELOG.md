@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.2 — pre-release
+
+- Fix false SSL installation failures and checkout unavailability on PrestaShop 9. Check its native `PS_SSL_ENABLED` setting without requiring the removed `PS_SSL_ENABLED_EVERYWHERE` key. SSL remains mandatory.
+- Correct SSL setup instructions and document recovery for earlier packages; no database workaround or schema migration is required.
+- Add fast and native-platform regression coverage for a missing/stale legacy key and disabled SSL. Stop introducing the removed key in the disposable integration fixture.
+
 ## 2.0.1 — pre-release
 
 - Name the module **SIMIPAY (M-PESA)** in the admin, with Samuel Simiyu identified as developer and maintainer.

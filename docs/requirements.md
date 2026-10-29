@@ -6,7 +6,7 @@ Give this page to your hosting provider before installation. The supported basel
 
 - Meet all [PrestaShop 9 system requirements](https://devdocs.prestashop-project.org/9/basics/installation/system-requirements/). Use the PHP compatibility range for the installed PrestaShop patch. The module additionally enforces PHP 8.2–8.5.
 - Enable cURL, JSON and OpenSSL. Keep the server CA certificate bundle current so outbound TLS verification succeeds.
-- Use HTTPS with a publicly trusted certificate. Enable **SSL** and **SSL on all pages** under **Shop Parameters > General**. Do not serve checkout through HTTP.
+- Use HTTPS with a publicly trusted certificate. Enable **SSL** under **Shop Parameters > General**. PrestaShop 9 uses this one setting for the whole shop; it no longer has a separate “SSL on all pages” setting. Do not serve checkout through HTTP.
 - Allow outbound HTTPS to `sandbox.kopokopo.com` and `api.kopokopo.com`.
 - Allow Kopo Kopo to POST JSON to the module callback URL, preserving the raw body and `X-KopoKopo-Signature` header. Do not place login gates, bot challenges, page caches or browser redirects in front of callbacks.
 - Allow the shop database user to create the module's InnoDB table and use MySQL/MariaDB `GET_LOCK` and `RELEASE_LOCK`. An intermediary must preserve connection affinity while a named lock is held. Transaction-pooling proxies are not supported.

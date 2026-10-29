@@ -17,6 +17,14 @@ Always compare the module's payment reference with Kopo Kopo's incoming-payment 
 | Review after successful debit | Cart/stock changed, another payment created the order, or core order creation was interrupted. Reconcile the order and funds manually. |
 | Secrets fail after migration | Restore the original shop `_COOKIE_KEY_` along with the database, or re-enter credentials. Never expose that key in a ticket. |
 
+## SSL enabled but installation still asks for it
+
+Version 2.0.0/2.0.1 incorrectly required both `PS_SSL_ENABLED` and the obsolete `PS_SSL_ENABLED_EVERYWHERE`. PrestaShop 9 removed the second key, so a correctly configured shop could be rejected during installation or have M-PESA hidden at checkout. This was a module compatibility bug, unrelated to whether the folder was manually zipped.
+
+Upload `kopokopo-2.0.2.zip` (or a newer release) and retry installation or the offered upgrade. Keep **Shop Parameters > General > Enable SSL** enabled and use a valid public HTTPS store URL. No manual database changes are required. If that setting is actually disabled, the fixed module still rejects installation.
+
+PrestaShop's [official upgrade verification](https://build.prestashop-project.org/test-scenarios/scenarios/core/sanity/upgrade/autoupgrade-verify-the-database-after-upgrade-to-v9.html) explicitly expects `PS_SSL_ENABLED` to remain and `PS_SSL_ENABLED_EVERYWHERE` to be absent in version 9.
+
 ## States
 
 - **Initiating:** attempt stored before the provider request.

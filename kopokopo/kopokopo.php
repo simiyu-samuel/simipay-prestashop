@@ -22,7 +22,7 @@ class Kopokopo extends PaymentModule
     {
         $this->name = 'kopokopo';
         $this->tab = 'payments_gateways';
-        $this->version = '2.0.1';
+        $this->version = '2.0.2';
         $this->author = 'Samuel Simiyu';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -48,8 +48,9 @@ class Kopokopo extends PaymentModule
         if (Shop::isFeatureActive()) {
             $errors[] = $this->l('This release supports single-store installations. Multistore is not supported.');
         }
-        if (!Configuration::get('PS_SSL_ENABLED') || !Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-            $errors[] = $this->l('Enable HTTPS and SSL on all pages in Shop Parameters > General.');
+        // PrestaShop 9 enforces SSL throughout using this single setting.
+        if (!Configuration::get('PS_SSL_ENABLED')) {
+            $errors[] = $this->l('Enable SSL in Shop Parameters > General and use a valid HTTPS store URL.');
         }
         return $errors;
     }

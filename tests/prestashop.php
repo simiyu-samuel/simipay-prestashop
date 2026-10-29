@@ -17,7 +17,8 @@ $kernel = new AdminKernel('prod', false);
 $kernel->boot();
 function verify(bool $condition, string $message): void { if (!$condition) throw new RuntimeException($message); }
 Configuration::updateValue('PS_SSL_ENABLED', 1);
-Configuration::updateValue('PS_SSL_ENABLED_EVERYWHERE', 1);
+// PrestaShop 9 removed this key; never introduce it just to satisfy the module.
+Configuration::deleteByName('PS_SSL_ENABLED_EVERYWHERE');
 Configuration::updateValue('PS_SHOP_ENABLE', 1);
 Configuration::updateValue('PS_MAIL_METHOD', 3); // Never send mail from test fixtures.
 $context = Context::getContext();
@@ -173,7 +174,7 @@ $module->database_version = '1.0.0';
 Module::upgradeModuleVersion('kopokopo', '1.0.0');
 verify(Module::initUpgradeModule($module), 'Core did not discover the upgrade.');
 $upgrade = $module->runUpgradeModule();
-verify($upgrade['success'] && (int) $upgrade['number_upgraded'] === 2, 'Core module upgrade failed: ' . json_encode($upgrade));
+verify($upgrade['success'] && (int) $upgrade['number_upgraded'] === 3, 'Core module upgrade failed: ' . json_encode($upgrade));
 verify($module->isRegisteredInHook('actionFrontControllerSetMedia'), 'Upgrade did not register branding assets.');
 verify(!is_file($legacyLog) && !Configuration::get('KOPOKOPO_CLIENT_SECRET'), 'Upgrade retained legacy logs/secrets.');
 verify(!$module->isRegisteredInHook('footer'), 'Upgrade retained the obsolete hook.');

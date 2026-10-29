@@ -26,6 +26,7 @@ jobs:
       - run: php scripts/check.php
       - run: php tests/run.php
       - run: php tests/settings.php
+      - run: php tests/requirements.php
       - run: node --check kopokopo/views/js/status.js
       - run: php scripts/build.php
       - run: php tests/package.php
