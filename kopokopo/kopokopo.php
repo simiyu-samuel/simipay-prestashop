@@ -62,8 +62,14 @@ class Kopokopo extends PaymentModule
             return false;
         }
         try {
-            return $this->installV2();
+            if ($this->installV2()) {
+                return true;
+            }
+            parent::uninstall();
+            $this->_errors[] = $this->l('Could not initialize the module schema or hooks.');
+            return false;
         } catch (Throwable) {
+            parent::uninstall();
             $this->_errors[] = $this->l('Could not initialize Kopo Kopo. Check the database and server requirements.');
             return false;
         }
@@ -75,7 +81,8 @@ class Kopokopo extends PaymentModule
             return false;
         }
         $this->settings()->initialize();
-        return $this->registerHook('paymentOptions') && $this->registerHook('paymentReturn');
+        return ($this->isRegisteredInHook('paymentOptions') || $this->registerHook('paymentOptions'))
+            && ($this->isRegisteredInHook('displayPaymentReturn') || $this->registerHook('displayPaymentReturn'));
     }
 
     public function uninstall()
@@ -115,7 +122,7 @@ class Kopokopo extends PaymentModule
             || (int) $this->context->cart->id_shop !== (int) $this->context->shop->id) {
             throw new PaymentException('This payment method is unavailable. Please return to checkout.', 403);
         }
-        foreach (Module::getPaymentModules() as $module) {
+        foreach (Hook::getHookModuleExecList('paymentOptions') ?: [] as $module) {
             if ((int) $module['id_module'] === (int) $this->id) {
                 return;
             }
@@ -136,6 +143,11 @@ class Kopokopo extends PaymentModule
     }
 
     public function hookPaymentReturn($params)
+    {
+        return $this->hookDisplayPaymentReturn($params);
+    }
+
+    public function hookDisplayPaymentReturn($params)
     {
         if (!isset($params['order']) || $params['order']->module !== $this->name) {
             return '';
@@ -180,6 +192,7 @@ class Kopokopo extends PaymentModule
             'completed' => $this->l('Payment received. Your order is confirmed.'),
             'failed' => $this->l('This payment request was not completed. You can return to checkout to try again.'),
             'review' => $this->l('This payment needs the merchant to review it. Do not pay again. Please contact the merchant with your payment reference.'),
+            'resolved' => $this->l('The merchant has resolved this payment separately. Please contact them for its order or refund details.'),
         ];
         $url = null;
         if ($attempt['state'] === 'completed' && $attempt['order_id']) {
@@ -194,6 +207,11 @@ class Kopokopo extends PaymentModule
 
     public function getContent()
     {
+        $employee = $this->context->employee;
+        if (!Validate::isLoadedObject($employee) || !$this->getPermission('configure', $employee)
+            || (!$employee->isSuperAdmin() && !$employee->can('edit', 'AdminModulesSf'))) {
+            return $this->displayError($this->l('You do not have permission to configure this payment module.'));
+        }
         $settings = $this->settings();
         $repository = new AttemptRepository();
         $notice = '';
@@ -225,6 +243,9 @@ class Kopokopo extends PaymentModule
                 } elseif ($action === 'recover') {
                     $this->recover($settings, $repository);
                     $notice = $this->displayConfirmation($this->l('Provider request linked and checked. See the payment list below.'));
+                } elseif ($action === 'resolve') {
+                    $this->resolve($settings, $repository);
+                    $notice = $this->displayConfirmation($this->l('Manual resolution recorded. No provider payment or refund was sent.'));
                 } else {
                     throw new PaymentException('Unknown configuration action.');
                 }
@@ -236,13 +257,37 @@ class Kopokopo extends PaymentModule
         }
         $environment = $settings->environment();
         $prefix = strtoupper($environment) . '_';
+        try {
+            $cronToken = $settings->secret('CRON_TOKEN');
+        } catch (RuntimeException) {
+            $cronToken = '';
+            $notice .= $this->displayError($this->l('The shop application key has changed. Restore the original key, or reconcile open payments and re-enter credentials. Save settings to generate a new scheduler token.'));
+        }
+        $stateLabels = ['initiating' => $this->l('Sending request'), 'pending' => $this->l('Waiting for payment'),
+            'unknown' => $this->l('Unresolved'), 'confirmed' => $this->l('Payment verified'), 'completing' => $this->l('Creating order'),
+            'completed' => $this->l('Completed'), 'failed' => $this->l('Failed'), 'review' => $this->l('Needs review'), 'resolved' => $this->l('Resolved manually')];
+        $reasonLabels = ['initiation_unresolved' => $this->l('The provider response was not received.'),
+            'initiation_rejected' => $this->l('The provider rejected the request.'), 'provider_failed' => $this->l('The provider reported payment failure.'),
+            'order_requires_review' => $this->l('Payment received; check the cart, stock and order.'),
+            'completion_interrupted' => $this->l('Order creation was interrupted; check existing orders before taking action.'),
+            'late_payment_after_resolution' => $this->l('A payment arrived after manual resolution.'),
+            'request_id_conflict' => $this->l('The provider request reference needs review.'),
+            'manual_unpaid' => $this->l('Merchant confirmed no payment was received.'),
+            'manual_refunded' => $this->l('Merchant recorded a separate refund.'), 'manual_order_handled' => $this->l('Merchant handled the order manually.')];
+        $attempts = $repository->recent($settings->shop);
+        foreach ($attempts as &$row) {
+            $row['formatted_amount'] = Values::decimal((int) $row['amount_minor']);
+            $row['state_label'] = $stateLabels[$row['state']] ?? $this->l('Needs review');
+            $row['reason_label'] = $reasonLabels[$row['reason']] ?? '';
+        }
+        unset($row);
         $this->context->smarty->assign([
             'form_action' => $this->context->link->getAdminLink('AdminModules', true, [], ['configure' => $this->name]),
             'form_token' => Tools::getAdminTokenLite('AdminModules'), 'environment' => $environment,
             'till' => $settings->get($prefix . 'TILL'), 'client_id' => $settings->get($prefix . 'CLIENT_ID'),
-            'requirements' => $this->requirements(), 'attempts' => $repository->recent($settings->shop),
+            'requirements' => $this->requirements(), 'attempts' => $attempts,
             'cron_url' => $this->context->link->getModuleLink($this->name, 'reconcile', [], true),
-            'cron_token' => $settings->secret('CRON_TOKEN'),
+            'cron_token' => $cronToken,
         ]);
         return $notice . $this->display(__FILE__, 'views/templates/admin/configure.tpl');
     }
@@ -269,7 +314,15 @@ class Kopokopo extends PaymentModule
         if (!preg_match('/^[A-Za-z0-9]{1,32}$/D', $data['till']) || $data['client_id'] === '') {
             throw new PaymentException('Enter your till number and OAuth client ID.');
         }
-        $current = $settings->forEnvironment($environment);
+        $prefix = strtoupper($environment) . '_';
+        $current = ['till' => $settings->get($prefix . 'TILL'), 'client_id' => $settings->get($prefix . 'CLIENT_ID')];
+        foreach (['client_secret', 'api_key'] as $key) {
+            try {
+                $current[$key] = $settings->secret($prefix . strtoupper($key));
+            } catch (RuntimeException) {
+                $current[$key] = '';
+            }
+        }
         foreach (['client_secret', 'api_key'] as $key) {
             if ($data[$key] === '') {
                 $data[$key] = $current[$key];
@@ -293,6 +346,11 @@ class Kopokopo extends PaymentModule
         if ($changed) {
             $settings->set($prefix . 'TOKEN', '');
         }
+        try {
+            $settings->secret('CRON_TOKEN');
+        } catch (RuntimeException) {
+            $settings->setSecret('CRON_TOKEN', bin2hex(random_bytes(32)));
+        }
     }
 
     private function recover(Settings $settings, AttemptRepository $repository): void
@@ -315,5 +373,30 @@ class Kopokopo extends PaymentModule
             $repository->update($attempt['id'], ['provider_id' => $providerId, 'provider_url' => $url]);
         });
         $this->payments($attempt['environment'])->receive($id, $body);
+    }
+
+    private function resolve(Settings $settings, AttemptRepository $repository): void
+    {
+        $id = (string) Tools::getValue('attempt_id');
+        $note = Tools::getValue('resolution_note', '');
+        $kind = Tools::getValue('resolution_kind');
+        if (!is_string($note) || strlen(trim($note)) < 10 || strlen($note) > 400
+            || !in_array($kind, ['unpaid', 'refunded', 'order_handled'], true) || Tools::getValue('resolution_confirm') !== '1') {
+            throw new PaymentException('Confirm provider verification, select a resolution and enter a 10–400 character audit note.');
+        }
+        $attempt = Values::attemptId($id) ? $repository->find($id) : null;
+        if (!$attempt || (int) $attempt['shop_id'] !== $settings->shop) {
+            throw new PaymentException('Payment attempt not found.');
+        }
+        $repository->locked($settings->shop, (int) $attempt['cart_id'], function () use ($repository, $id, $note, $kind): void {
+            $current = $repository->find($id);
+            if (!in_array($current['state'], ['unknown', 'review', 'pending', 'initiating'], true)
+                || ($kind === 'unpaid' && $current['receipt'])
+                || ($kind !== 'unpaid' && !$current['receipt'])) {
+                throw new PaymentException('This resolution is not appropriate for the recorded payment state.');
+            }
+            $repository->update($id, ['state' => 'resolved', 'reason' => 'manual_' . $kind,
+                'resolution_note' => 'Employee ' . (int) $this->context->employee->id . ': ' . trim($note)]);
+        });
     }
 }

@@ -44,7 +44,7 @@ final class Payments
                 $result = $this->gateway->initiate([
                     'payment_channel' => 'M-PESA STK Push', 'till_number' => $attempt['till'],
                     'subscriber' => ['phone_number' => $phone] + $snapshot['subscriber'],
-                    'amount' => ['currency' => 'KES', 'value' => Values::decimal($attempt['amount_minor'])],
+                    'amount' => ['currency' => 'KES', 'value' => (float) Values::decimal($attempt['amount_minor'])],
                     'metadata' => ['attempt_id' => $id, 'cart_id' => (string) $cart],
                     '_links' => ['callback_url' => $callbackUrl($id)],
                 ]);
@@ -82,6 +82,12 @@ final class Payments
             }
             $changes = ['provider_id' => $payment['provider_id'],
                 'provider_url' => Client::base($attempt['environment']) . '/api/v2/incoming_payments/' . $payment['provider_id']];
+            if ($attempt['state'] === 'resolved') {
+                if ($payment['status'] === 'Success') {
+                    $this->repository->update($id, $changes + ['state' => 'review', 'receipt' => $payment['receipt'], 'reason' => 'late_payment_after_resolution']);
+                }
+                return $this->required($id);
+            }
             if ($payment['status'] === 'Success') {
                 $changes += ['state' => 'confirmed', 'receipt' => $payment['receipt'], 'reason' => ''];
                 if ($attempt['state'] === 'completing') {
@@ -111,15 +117,19 @@ final class Payments
     public function reconcile(string $id): array
     {
         $attempt = $this->required($id);
-        if (in_array($attempt['state'], ['completed', 'failed', 'review'], true)) {
+        if (in_array($attempt['state'], ['completed', 'failed', 'review', 'resolved'], true)) {
             return $attempt;
         }
         $this->repository->update($id, ['checked_at' => gmdate('Y-m-d H:i:s')]);
         if (empty($attempt['provider_url'])) {
-            if (strtotime($attempt['created_at'] . ' UTC') < time() - 120) {
-                $this->repository->update($id, ['state' => 'unknown', 'reason' => 'initiation_unresolved']);
-            }
-            return $this->required($id);
+            return $this->repository->locked((int) $attempt['shop_id'], (int) $attempt['cart_id'], function () use ($id): array {
+                $latest = $this->required($id);
+                if (empty($latest['provider_url']) && in_array($latest['state'], ['initiating', 'pending', 'unknown'], true)
+                    && strtotime($latest['created_at'] . ' UTC') < time() - 120) {
+                    $this->repository->update($id, ['state' => 'unknown', 'reason' => 'initiation_unresolved']);
+                }
+                return $this->required($id);
+            });
         }
         return $this->receive($id, $this->gateway->query($attempt['provider_url']));
     }

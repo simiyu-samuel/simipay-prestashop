@@ -26,7 +26,7 @@ final class AttemptRepository implements Repository
             `provider_id` CHAR(36) NULL, `provider_url` VARCHAR(255) NULL,
             `receipt` VARCHAR(64) NULL, `state` VARCHAR(16) NOT NULL,
             `order_id` INT UNSIGNED NULL, `order_reference` VARCHAR(32) NOT NULL,
-            `reason` VARCHAR(64) NOT NULL DEFAULT \'\',
+            `reason` VARCHAR(64) NOT NULL DEFAULT \'\', `resolution_note` VARCHAR(512) NOT NULL DEFAULT \'\',
             `created_at` DATETIME NOT NULL, `updated_at` DATETIME NOT NULL, `checked_at` DATETIME NULL,
             PRIMARY KEY (`id`),
             UNIQUE KEY `provider_request` (`environment`, `provider_id`),
@@ -73,7 +73,7 @@ final class AttemptRepository implements Repository
     public function openForCart(int $shop, int $cart): ?array
     {
         return $this->db->getRow('SELECT * FROM `' . bqSQL($this->table) . '` WHERE shop_id = ' . $shop
-            . ' AND cart_id = ' . $cart . " AND state <> 'failed' ORDER BY created_at DESC, id DESC", false) ?: null;
+            . ' AND cart_id = ' . $cart . " AND state NOT IN ('failed','resolved') ORDER BY created_at DESC, id DESC", false) ?: null;
     }
 
     public function countRecent(int $shop, int $customer): int

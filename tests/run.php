@@ -33,7 +33,7 @@ final class MemoryRepository implements Repository {
     public function find(string $id): ?array { return $this->rows[$id] ?? null; }
     public function update(string $id, array $changes): void { $this->rows[$id] = array_replace($this->rows[$id], $changes); }
     public function openForCart(int $shop, int $cart): ?array {
-        foreach (array_reverse($this->rows) as $row) if ($row['shop_id'] === $shop && $row['cart_id'] === $cart && $row['state'] !== 'failed') return $row;
+        foreach (array_reverse($this->rows) as $row) if ($row['shop_id'] === $shop && $row['cart_id'] === $cart && !in_array($row['state'], ['failed', 'resolved'], true)) return $row;
         return null;
     }
     public function countRecent(int $shop, int $customer): int {
@@ -133,7 +133,7 @@ $tests['Initiation persists the server cart and does not repeat on double click'
     [$service, $repo, $gateway] = fixture();
     $gateway->during = function ($body) use ($repo) { same('initiating', $repo->find($body['metadata']['attempt_id'])['state']); };
     $attempt = start($service); same('pending', $attempt['state']); same(12550, $attempt['amount_minor']);
-    same('125.50', $gateway->payload['amount']['value']); same('100', $gateway->payload['metadata']['cart_id']);
+    same(125.5, $gateway->payload['amount']['value']); same('100', $gateway->payload['metadata']['cart_id']);
     same($attempt['id'], start($service)['id']); same(1, $gateway->calls);
 };
 $tests['Foreign cart ownership is rejected before provider I/O'] = function () {
@@ -218,6 +218,30 @@ $tests['Accepted initiation without Location remains unresolved'] = function () 
     [$client] = apiFixture([tokenResponse(), ['status' => 201, 'headers' => [], 'body' => '']]);
     try { $client->initiate([]); throw new RuntimeException('Expected unresolved response'); }
     catch (GatewayException $error) { same(true, $error->ambiguous); }
+};
+
+$tests['A late payment after manual resolution is retained for review without creating an order'] = function () {
+    [$service, $repo, , $orders] = fixture(); $attempt = start($service);
+    $repo->update($attempt['id'], ['state' => 'resolved', 'reason' => 'manual_unpaid', 'resolution_note' => 'Provider confirmed no payment at review time.']);
+    $result = $service->receive($attempt['id'], payload($attempt));
+    same('review', $result['state']); same('late_payment_after_resolution', $result['reason']); same('TESTRECEIPT', $result['receipt']); same(0, $orders->calls);
+};
+$tests['A token network failure cannot have sent an STK prompt'] = function () {
+    [$client, $transport] = apiFixture([new GatewayException(true)]);
+    try { $client->initiate([]); throw new RuntimeException('Expected auth failure'); }
+    catch (GatewayException $error) { same(false, $error->ambiguous); }
+    same(1, count($transport->requests));
+};
+$tests['An expired GET refreshes once without repeating a payment POST'] = function () {
+    $url = Client::base('sandbox') . '/api/v2/incoming_payments/' . FakeGateway::ID;
+    $transport = new QueueTransport([
+        ['status' => 401, 'headers' => [], 'body' => ''], tokenResponse(),
+        ['status' => 200, 'headers' => [], 'body' => '{"data":{"id":"test"}}'],
+    ]);
+    $cache = ['token' => 'cached-token', 'expires' => time() + 3600];
+    $client = new Client($transport, 'sandbox', 'client', 'secret', static fn () => $cache, static function ($token) {});
+    same(['data' => ['id' => 'test']], $client->query($url));
+    same('GET', $transport->requests[0]['method']); same('POST', $transport->requests[1]['method']); same('GET', $transport->requests[2]['method']);
 };
 
 $passed = 0;

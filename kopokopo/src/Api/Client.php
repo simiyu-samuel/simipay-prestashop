@@ -65,7 +65,7 @@ final class Client implements Gateway
         // Obtain the token before the STK request: a token failure cannot have charged a customer.
         try {
             $token = $this->token();
-        } catch (GatewayException) {
+        } catch (\Throwable) {
             throw new GatewayException(false, 'Kopo Kopo authentication is unavailable. No payment prompt was sent.');
         }
         $response = $this->transport->request('POST', $this->base . '/api/v2/incoming_payments',

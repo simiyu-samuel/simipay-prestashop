@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const panel = document.getElementById('kopokopo-status');
-  if (!panel || ['failed', 'review'].includes(panel.dataset.state)) return;
+  if (!panel || ['failed', 'review', 'resolved'].includes(panel.dataset.state)) return;
   const endpoint = new URL(panel.dataset.statusUrl, window.location.href);
   if (endpoint.origin !== window.location.origin) return;
   let polls = 0;
@@ -24,7 +24,7 @@
         if (destination.origin === window.location.origin) window.location.replace(destination.href);
         return;
       }
-      if (['failed', 'review'].includes(data.state)) {
+      if (['failed', 'review', 'resolved'].includes(data.state)) {
         window.location.reload();
         return;
       }

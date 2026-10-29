@@ -14,7 +14,6 @@ final class CurlTransport implements Transport
             CURLOPT_CONNECTTIMEOUT => 5,
             CURLOPT_TIMEOUT => 25,
             CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_HEADERFUNCTION => static function ($handle, string $line) use (&$responseHeaders): int {
@@ -34,6 +33,11 @@ final class CurlTransport implements Transport
                 return strlen($chunk);
             },
         ]);
+        if (defined('CURLOPT_PROTOCOLS_STR')) {
+            curl_setopt($curl, CURLOPT_PROTOCOLS_STR, 'https');
+        } else {
+            curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+        }
         if ($body !== null) {
             curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
         }

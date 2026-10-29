@@ -26,11 +26,15 @@ final class ShopOrders implements Orders
             || $cart->orderExists()) {
             throw new PaymentException('This cart is no longer available for payment.', 409);
         }
+        $addresses = [];
         foreach ([$cart->id_address_delivery, $cart->id_address_invoice] as $addressId) {
             $address = new \Address((int) $addressId);
             if (!\Validate::isLoadedObject($address) || (int) $address->id_customer !== $customerId || $address->deleted) {
                 throw new PaymentException('Please complete your checkout address first.', 409);
             }
+            $addresses[] = [(int) $address->id_country, (int) $address->id_state, (string) $address->postcode, (string) $address->city,
+                (string) $address->address1, (string) $address->address2, (string) $address->firstname,
+                (string) $address->lastname, (string) $address->company, (string) $address->vat_number];
         }
         $currency = new \Currency((int) $cart->id_currency);
         if ($currency->iso_code !== 'KES' || (int) $currency->precision !== 2 || $currency->deleted || !$currency->active) {
@@ -42,6 +46,11 @@ final class ShopOrders implements Orders
         if (!$cart->isVirtualCart() && !$cart->id_carrier) {
             throw new PaymentException('Please select a delivery method first.', 409);
         }
+        $minimum = \Tools::convertPrice((float) \Configuration::get('PS_PURCHASE_MINIMUM'), $currency);
+        \Hook::exec('overrideMinimalPurchasePrice', ['minimalPurchase' => &$minimum]);
+        if ($cart->getOrderTotal(false, \Cart::ONLY_PRODUCTS) < $minimum) {
+            throw new PaymentException('Your cart does not meet the minimum order amount.', 409);
+        }
         $minor = Values::minor(number_format((float) $cart->getOrderTotal(true, \Cart::BOTH), 2, '.', ''));
         $products = [];
         foreach ($cart->getProducts(true) as $product) {
@@ -50,9 +59,10 @@ final class ShopOrders implements Orders
                 (string) $product['price_wt']];
         }
         sort($products);
-        $fingerprint = [$cart->id_customer, $cart->id_currency, $cart->id_address_delivery,
-            $cart->id_address_invoice, $cart->id_carrier, $minor, $products,
-            $cart->gift, $cart->recyclable, $cart->gift_message, $cart->getDeliveryOption()];
+        // Legacy hydration/caches may expose the same flag as "0" or 0. Hash semantic values.
+        $fingerprint = [(int) $cart->id_customer, (int) $cart->id_currency, (int) $cart->id_address_delivery,
+            (int) $cart->id_address_invoice, (int) $cart->id_carrier, $minor, $products,
+            (bool) $cart->gift, (bool) $cart->recyclable, (string) $cart->gift_message, $cart->getDeliveryOption(), $addresses];
         return ['amount_minor' => $minor, 'currency_id' => (int) $currency->id,
             'hash' => hash('sha256', json_encode($fingerprint, JSON_THROW_ON_ERROR)),
             'subscriber' => ['first_name' => $customer->firstname, 'last_name' => $customer->lastname, 'email' => $customer->email]];
@@ -89,6 +99,12 @@ final class ShopOrders implements Orders
         }
         if (!$result || !$orders || $total !== (int) $attempt['amount_minor']) {
             throw new \RuntimeException('Order completion was not confirmed.');
+        }
+        $paid = \Db::getInstance()->getValue('SELECT SUM(amount) FROM `' . _DB_PREFIX_ . 'order_payment` WHERE order_reference = '
+            . "'" . pSQL($attempt['order_reference']) . "' AND transaction_id = '" . pSQL($attempt['receipt'])
+            . "' AND id_currency = " . (int) $attempt['currency_id'], false);
+        if (!$paid || Values::minor(number_format((float) $paid, 2, '.', '')) !== (int) $attempt['amount_minor']) {
+            throw new \RuntimeException('Native order payment receipt was not confirmed.');
         }
         return (int) $orders[0]['id_order'];
     }
