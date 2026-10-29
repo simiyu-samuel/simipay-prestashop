@@ -9,6 +9,7 @@ No code editing or Composer is needed. Your host handles [server requirements](h
 3. In **Shop Parameters > General**, enable SSL and SSL on all pages.
 4. Start on a staging shop with a public HTTPS URL. A local/private URL cannot receive Kopo Kopo callbacks.
 5. Obtain sandbox application credentials and the sandbox till from Kopo Kopo.
+6. In **Shipping > Carriers**, enable a delivery or collection option for your customers' delivery zone (Kenya is in **Africa** by default), customer groups and product weight/price range. Checkout needs an available carrier before it can reach payment. Sample carriers may cover only Europe or North America.
 
 ## 2. Upload and install
 

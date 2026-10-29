@@ -6,6 +6,7 @@ Always compare the module's payment reference with Kopo Kopo's incoming-payment 
 | --- | --- |
 | Module will not install | PrestaShop 9.2.x, PHP 8.2–8.5, cURL/OpenSSL, SSL on every page, single store and database permissions. |
 | No M-PESA method in checkout | Saved credentials in the selected environment; KES currency; module active; country/group/carrier/payment preferences. |
+| “No carriers available for your delivery address” | In **Shipping > Carriers**, check an active carrier covers the delivery country's zone, customer group and cart weight/price range. Kenya belongs to Africa by default; sample carriers may exclude Africa. Save the carrier settings and refresh checkout. Then check the module's native carrier restrictions under Payment Preferences. |
 | Connection test fails | Client ID/secret for the selected environment; outbound HTTPS, DNS, CA certificates, provider availability and application access. |
 | Authentication passes, initiation fails | Till eligibility, environment, Kopo Kopo application permissions and valid Kenyan mobile number. Connection testing does not validate the API signing key. |
 | No phone prompt | Provider/sandbox scenario, phone number, mobile availability, or an unresolved initiation. Check the attempt before retrying. |
