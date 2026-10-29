@@ -16,6 +16,8 @@ Recorded 29 October 2026 for the version 2.0.0 candidate.
 | Real lifecycle and core flow | Built ZIP extracted and installed through native module methods; encrypted settings, database persistence, native order creation and receipt recording pass |
 | Native checkout preferences | Direct initiation honors the native payment-option restrictions; disabling the test carrier is rejected |
 | Native UI/templates | Admin configuration renders; customer and payment-return templates compile |
+| Merchant browser installation | Fresh official PrestaShop Classic 9.2.0 package; release ZIP selected in Module Manager's upload dialog; “Module installed!” displayed; Configure opens the sandbox form |
+| Public demo HTTPS/access rules | Apache 2.4.66 behind ngrok HTTPS; configuration/log/implementation/documentation requests return 403, public module JavaScript returns 200 |
 | Idempotency and storage | Duplicate initiation/callback protection, cross-connection named-lock exclusion/release, and provider-request uniqueness pass |
 | Native upgrade | Core upgrade runner discovers and executes the 1.0.0 → 2.0.0 migration; legacy log/credentials/footer hook cleanup verified |
 | Uninstall/reinstall | Financial records and saved credentials survive |
@@ -24,7 +26,7 @@ Recorded 29 October 2026 for the version 2.0.0 candidate.
 
 The real-platform smoke test caught and drove fixes for cart flag normalization (`"0"` versus `0`) and repeated registration of a legacy hook alias. Those checks remain in the integration suite.
 
-Provider results in the domain/platform/HTTP tests are synthetic. The loopback HTTP test simulates TLS termination in a test-only router; it does not certify public HTTPS, a reverse proxy, Apache/Nginx access rules or actual Kopo Kopo delivery. Native module methods were exercised against the built ZIP; a visual browser test of Module Manager's upload dialog is still outstanding.
+Provider results in the domain/platform/HTTP tests are synthetic. The loopback HTTP test simulates TLS termination in a test-only router. A separate browser rehearsal used the official Classic 9.2.0-6.0 package, Hummingbird 2.1.2, PHP 8.4.16, MariaDB 10.4.34 and Apache behind a public ngrok HTTPS tunnel. The merchant ZIP upload and configuration screen passed. Access checks for `app/config/parameters.php`, a real application log, module implementation and module documentation returned 403; public module JavaScript returned 200. These checks cover this demo setup and do not certify a client's hosting or actual Kopo Kopo callback delivery. The demo has sample data and outgoing email disabled; provider credentials have not been entered.
 
 ## Still required before production release
 

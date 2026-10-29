@@ -35,6 +35,8 @@ Never set these variables to a live or client shop. See `docs/validation.md` for
 
 ## Staging acceptance before production release
 
+For a demonstration that follows the client's ZIP upload and configuration process, use the [merchant walkthrough](merchant-walkthrough.md).
+
 Record the PrestaShop patch, PHP patch, DB version, theme version and checkout module/version for every run.
 
 - [ ] Install the built ZIP through Module Manager; configuration opens with no PHP/Smarty errors.
