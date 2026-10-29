@@ -1,0 +1,21 @@
+name: Feature or compatibility proposal
+description: Propose an enhancement or an additional supported environment.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior and exact compatibility targets
+      description: Include PHP, PrestaShop and checkout versions where relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: How would this be tested and maintained?

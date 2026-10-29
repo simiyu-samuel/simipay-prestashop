@@ -1,5 +1,7 @@
 # Kopo Kopo module modernization audit
 
+> Historical audit of the 2024 baseline, recorded before the version 2 implementation. See `architecture.md` and `validation.md` for the current design and test status.
+
 Reviewed: 29 October 2026.
 
 Module baseline: `main`, commit `2d92dffe87d5ac4941cad960deea1749a518a6fb` (30 September 2024), module version 1.0.0.

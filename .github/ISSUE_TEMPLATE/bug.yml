@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a reproducible module issue without private data.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Never include credentials, scheduler tokens, phone numbers, full callbacks or customer records. Use SECURITY.md for vulnerability reports.
+  - type: input
+    id: versions
+    attributes:
+      label: Module, PrestaShop and PHP versions
+      placeholder: '2.0.0 / 9.2.0 / 8.4'
+    validations:
+      required: true
+  - type: input
+    id: checkout
+    attributes:
+      label: Theme and checkout
+      placeholder: Hummingbird / native one-page checkout
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Provider environment
+      options: [Sandbox, Production]
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps, expected result and actual result
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Sanitized diagnostics and payment state
+      description: State/reason only. Remove identifiers, personal details and secrets.

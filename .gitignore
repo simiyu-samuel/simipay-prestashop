@@ -1,0 +1,12 @@
+/dist/
+/kopokopo/vendor/
+/kopokopo/logs/
+/node_modules/
+/.env
+/.env.*
+*.log
+*.zip
+.phpunit.cache/
+.DS_Store
+
+/.work/
