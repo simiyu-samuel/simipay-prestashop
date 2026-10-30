@@ -41,11 +41,19 @@ final class Payments
             ];
             $this->repository->create($attempt);
             try {
+                $metadata = ['attempt_id' => $id, 'cart_id' => (string) $cart,
+                    'order_reference' => $attempt['order_reference']];
+                // Checkout identity is merchant context, not the provider-verified payer identity.
+                $customerName = trim(trim($snapshot['subscriber']['first_name'] ?? '') . ' '
+                    . trim($snapshot['subscriber']['last_name'] ?? ''));
+                if ($customerName !== '') {
+                    $metadata['customer_name'] = $customerName;
+                }
                 $result = $this->gateway->initiate([
                     'payment_channel' => 'M-PESA STK Push', 'till_number' => $attempt['till'],
                     'subscriber' => ['phone_number' => $phone] + $snapshot['subscriber'],
                     'amount' => ['currency' => 'KES', 'value' => (float) Values::decimal($attempt['amount_minor'])],
-                    'metadata' => ['attempt_id' => $id, 'cart_id' => (string) $cart],
+                    'metadata' => $metadata,
                     '_links' => ['callback_url' => $callbackUrl($id)],
                 ]);
             } catch (GatewayException $exception) {

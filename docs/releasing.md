@@ -16,9 +16,9 @@
 6. Write `docs/releases/v<version>.md` with merchant installation steps, requirements, upgrade notes and validation limits. Once publication is authorized, create an annotated tag on the reviewed source commit and push the source and tag:
 
    ```sh
-   git tag -a v2.0.2 -m "SIMIPAY (M-PESA) 2.0.2 pre-release"
+   git tag -a v2.0.3 -m "SIMIPAY (M-PESA) 2.0.3 pre-release"
    git push origin main
-   git push origin v2.0.2
+   git push origin v2.0.3
    ```
 
    Use the actual version being released. Never move a published tag to different code.

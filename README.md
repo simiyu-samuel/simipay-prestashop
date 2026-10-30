@@ -6,7 +6,7 @@ Created and maintained by **[Samuel Simiyu](https://simiyu-samuel.vercel.app/)**
 
 Accept M-PESA payments using Kopo Kopo API v2 STK Push. Customers enter a Kenyan mobile number, approve the prompt on their phone, and receive an order confirmation after the payment has been verified.
 
-**Version 2.0.2 is a release candidate.** It fixes the false SSL requirement error on PrestaShop 9, with fast and native-platform regression coverage. Earlier core validation verified browser installation, real sandbox authentication, failed/successful payments, signed callbacks and native paid-order/receipt creation locally. A fresh 2.0.2 browser installation/upgrade and store-specific/live acceptance remain outstanding. See [validation status](docs/validation.md).
+**Version 2.0.3 is an installable pre-release.** It adds the checkout customer name and reserved order reference to Kopo Kopo request metadata for reconciliation. A first merchant reported a successful live KES 10 payment on 30 October 2026, with a paid PrestaShop order and a received Kopo Kopo transaction. This is evidence for that live happy path; the new metadata, broader production scenarios and exact client environment still need acceptance. See [validation status](docs/validation.md).
 
 ## For merchants
 
@@ -32,7 +32,7 @@ PrestaShop 8, PHP 8.1 and earlier, multistore, other currencies, custom checkout
 3. Run the [checkout acceptance checklist](docs/testing.md) in staging and sandbox.
 4. Use [troubleshooting and payment recovery](docs/troubleshooting.md) if needed.
 
-Download **[kopokopo-2.0.2.zip](https://github.com/simiyu-samuel/simipay-prestashop/releases/download/v2.0.2/kopokopo-2.0.2.zip)** from the **[SIMIPAY 2.0.2 pre-release](https://github.com/simiyu-samuel/simipay-prestashop/releases/tag/v2.0.2)**. This is the module ready for upload, **not** GitHub's automatically generated “Source code” ZIP. Other versions are listed under [GitHub Releases](https://github.com/simiyu-samuel/simipay-prestashop/releases). Maintainers can build the package with `php scripts/build.php`.
+Download **[kopokopo-2.0.3.zip](https://github.com/simiyu-samuel/simipay-prestashop/releases/download/v2.0.3/kopokopo-2.0.3.zip)** from the **[SIMIPAY 2.0.3 pre-release](https://github.com/simiyu-samuel/simipay-prestashop/releases/tag/v2.0.3)**. This is the module ready for upload, **not** GitHub's automatically generated “Source code” ZIP. Other versions are listed under [GitHub Releases](https://github.com/simiyu-samuel/simipay-prestashop/releases). Maintainers can build the package with `php scripts/build.php`.
 
 ## What the module handles
 
@@ -42,6 +42,7 @@ Download **[kopokopo-2.0.2.zip](https://github.com/simiyu-samuel/simipay-prestas
 - Duplicate and late callbacks; unresolved requests without automatically sending another STK prompt.
 - Customer status polling; native PrestaShop order confirmation; M-PESA receipt attached to the order payment.
 - An admin payment list, status checks, lost-response recovery, and a protected reconciliation endpoint for hosting schedulers.
+- Checkout customer names in the documented subscriber fields, plus customer name and reserved order reference in request metadata. Provider dashboard display is controlled by Kopo Kopo.
 - Installation schema and upgrade handling. Financial records survive uninstall/reinstall.
 - Original SIMIPAY icon, developer attribution and packaged authorship credits. Branding loads from the shop itself, with no external tracking or activation service.
 

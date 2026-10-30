@@ -17,6 +17,16 @@ Always compare the module's payment reference with Kopo Kopo's incoming-payment 
 | Review after successful debit | Cart/stock changed, another payment created the order, or core order creation was interrupted. Reconcile the order and funds manually. |
 | Secrets fail after migration | Restore the original shop `_COOKIE_KEY_` along with the database, or re-enter credentials. Never expose that key in a ticket. |
 
+## Kopo Kopo shows “Name: Not available”
+
+SIMIPAY already sends the checkout customer's first name, last name and email in the API's documented `subscriber` object. Starting in 2.0.3, new incoming-payment requests also include `customer_name` (when available) and the reserved `order_reference` in metadata, alongside `attempt_id` and `cart_id`. These help correlate provider requests with shop orders wherever Kopo Kopo exposes request metadata. The reserved order reference does not mean an unpaid order has been created.
+
+The checkout customer is not necessarily the owner of the paying M-PESA phone. Provider-returned `sender_first_name`/`sender_last_name` fields describe the payer separately. The API documentation does not promise that subscriber names or metadata populate the dashboard's Buygoods transaction “Name” column. Upgrading cannot guarantee that display or change existing provider transactions. Do not substitute a shopper-supplied name for a verified payer identity.
+
+If the dashboard still has no name, ask Kopo Kopo privately whether the incoming-payment request retained its subscriber names/metadata and what source populates that transaction screen. Supply the provider request/receipt reference through their private support channel; do not post customer details, raw payloads or credentials publicly. No customer or support message is sent automatically by this module.
+
+Sources: [STK subscriber fields](https://developers.kopokopo.com/guides/receive-money/mpesa-stk.html), [incoming-payment API and metadata](https://api-docs.kopokopo.com/#receive-m-pesa-payments).
+
 ## SSL enabled but installation still asks for it
 
 Version 2.0.0/2.0.1 incorrectly required both `PS_SSL_ENABLED` and the obsolete `PS_SSL_ENABLED_EVERYWHERE`. PrestaShop 9 removed the second key, so a correctly configured shop could be rejected during installation or have M-PESA hidden at checkout. This was a module compatibility bug, unrelated to whether the folder was manually zipped.

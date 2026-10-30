@@ -60,11 +60,19 @@ Callbacks confirm payments normally. Scheduled reconciliation checks requests th
 
 Do not change an environment's credentials or till while it has unresolved payment attempts. Resolve those attempts first so callbacks remain verifiable. Do not disable/uninstall the module while requests are unresolved: PrestaShop does not dispatch module controllers for disabled modules.
 
-## Upgrading from 2.0.0 or 2.0.1 to 2.0.2
+## Customer details at Kopo Kopo
 
-Back up the shop, upload `kopokopo-2.0.2.zip` through Module Manager and run the offered upgrade. Version 2.0.2 fixes the false SSL requirement error on PrestaShop 9; no database migration or new credentials are needed. Upgrading from 2.0.0 also applies the existing SIMIPAY branding and asset-hook upgrade. Credentials, payment history, existing orders, callback routes and the `kopokopo` folder name are retained.
+The module sends the checkout customer's first/last name and email in the documented subscriber fields. Version 2.0.3 also includes the available customer name and reserved shop order reference in request metadata. This helps reconcile new requests; it does not guarantee a name appears in Kopo Kopo's transaction screen or modify earlier payments. The checkout customer and M-PESA payer may be different people. See [name-display troubleshooting](https://github.com/simiyu-samuel/simipay-prestashop/blob/main/docs/troubleshooting.md#kopo-kopo-shows-name-not-available).
 
-If an earlier installation failed with “Enable HTTPS and SSL on all pages” despite SSL being enabled, upload the 2.0.2 package and retry installation. Do not add obsolete SSL settings to the database or disable HTTPS. This error also affected manually zipped copies of the earlier module source.
+## Upgrading from 2.0.0–2.0.2 to 2.0.3
+
+Back up the shop, upload `kopokopo-2.0.3.zip` through Module Manager and run the offered upgrade. No schema migration or credential re-entry is needed. Existing payment history, pending requests and callback routes are retained. New requests receive the extra metadata; the module does not resend pending payment requests or backfill provider records. Earlier versioned upgrade steps also run when applicable.
+
+After upgrading, complete a sandbox payment and check its incoming-request metadata, native order reference, amount and M-PESA receipt. Retest the merchant's live flow under controlled conditions; the earlier reported live success does not test this new metadata.
+
+## SSL correction included since 2.0.2
+
+Versions 2.0.0/2.0.1 incorrectly required an SSL setting removed in PrestaShop 9. The correction is included in 2.0.3. If an earlier installation failed with “Enable HTTPS and SSL on all pages” despite SSL being enabled, upload the current package and retry installation. Keep **Shop Parameters > General > Enable SSL** enabled. Do not add obsolete SSL keys to the database or disable HTTPS. This error also affected manually zipped copies of the earlier source.
 
 ## Upgrading from 1.0.0
 

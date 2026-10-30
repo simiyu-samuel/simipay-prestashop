@@ -6,7 +6,8 @@ $zip = new ZipArchive();
 if ($zip->open($path) !== true) throw new RuntimeException('Run php scripts/build.php first.');
 foreach (['kopokopo/kopokopo.php', 'kopokopo/bootstrap.php', 'kopokopo/config.xml', 'kopokopo/.htaccess',
     'kopokopo/upgrade/upgrade-2.0.0.php', 'kopokopo/src/Domain/Payments.php', 'kopokopo/views/js/status.js',
-    'kopokopo/upgrade/upgrade-2.0.1.php', 'kopokopo/upgrade/upgrade-2.0.2.php', 'kopokopo/views/templates/_partials/attribution.tpl',
+    'kopokopo/upgrade/upgrade-2.0.1.php', 'kopokopo/upgrade/upgrade-2.0.2.php', 'kopokopo/upgrade/upgrade-2.0.3.php',
+    'kopokopo/views/templates/_partials/attribution.tpl',
     'kopokopo/views/templates/hook/payment_information.tpl', 'kopokopo/views/css/branding.css',
     'kopokopo/logo.png', 'kopokopo/logo.svg', 'kopokopo/AUTHORS.md', 'kopokopo/NOTICE',
     'kopokopo/INSTALL.md', 'kopokopo/LICENSE'] as $name) {

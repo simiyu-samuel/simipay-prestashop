@@ -174,7 +174,7 @@ $module->database_version = '1.0.0';
 Module::upgradeModuleVersion('kopokopo', '1.0.0');
 verify(Module::initUpgradeModule($module), 'Core did not discover the upgrade.');
 $upgrade = $module->runUpgradeModule();
-verify($upgrade['success'] && (int) $upgrade['number_upgraded'] === 3, 'Core module upgrade failed: ' . json_encode($upgrade));
+verify($upgrade['success'] && (int) $upgrade['number_upgraded'] === 4, 'Core module upgrade failed: ' . json_encode($upgrade));
 verify($module->isRegisteredInHook('actionFrontControllerSetMedia'), 'Upgrade did not register branding assets.');
 verify(!is_file($legacyLog) && !Configuration::get('KOPOKOPO_CLIENT_SECRET'), 'Upgrade retained legacy logs/secrets.');
 verify(!$module->isRegisteredInHook('footer'), 'Upgrade retained the obsolete hook.');

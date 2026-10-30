@@ -12,6 +12,8 @@ Front controllers handle the payment page, POST initiation, read-only customer s
 
 The server selects cart/customer/amount/currency and validates eligibility, address ownership, KES, stock and product access. A cart-scoped database named lock serializes initiation and callbacks. The attempt is persisted before provider I/O, with an opaque ID sent in metadata and the callback URL. The provider's HTTP 201 resource URL is retained.
 
+The documented `subscriber` object carries the checkout customer's first/last name and email with the payment phone number. Request metadata contains `attempt_id`, `cart_id`, the already-reserved `order_reference`, and `customer_name` when available: at most four of the provider's five allowed pairs. The same reserved reference is used if a native order is later created; it is not proof an order already exists. The checkout customer can differ from the M-PESA payer. Names are reconciliation context, not identity verification or a replacement for signature/financial matching. Kopo Kopo controls whether and where its dashboard displays supplied names or metadata.
+
 Any open/completed/review attempt prevents another initiation on that cart. Definitively rejected attempts allow retry; a customer has at most ten attempts per hour. An ambiguous response does not prove failure: it remains unknown, blocks repeat initiation and can be resolved by a signed callback or verified provider-resource recovery.
 
 ## Confirmation and orders

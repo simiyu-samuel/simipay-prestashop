@@ -30,6 +30,7 @@ class Shop
 
 require dirname(__DIR__) . '/kopokopo/kopokopo.php';
 require dirname(__DIR__) . '/kopokopo/upgrade/upgrade-2.0.2.php';
+require dirname(__DIR__) . '/kopokopo/upgrade/upgrade-2.0.3.php';
 $module = (new ReflectionClass(Kopokopo::class))->newInstanceWithoutConstructor();
 function checkRequirements(bool $condition, string $message): void
 {
@@ -43,6 +44,7 @@ foreach ([[], ['PS_SSL_ENABLED_EVERYWHERE' => 0], ['PS_SSL_ENABLED_EVERYWHERE' =
         Configuration::$data = ['PS_SSL_ENABLED' => $enabled] + $legacy;
         checkRequirements($module->requirements() === [], 'HTTPS-enabled PrestaShop 9 shop was rejected.');
         checkRequirements(upgrade_module_2_0_2($module), 'HTTPS-enabled shop could not upgrade.');
+        checkRequirements(upgrade_module_2_0_3($module), 'HTTPS-enabled shop could not upgrade to 2.0.3.');
     }
 }
 
@@ -52,6 +54,7 @@ foreach ([[], ['PS_SSL_ENABLED' => 0], ['PS_SSL_ENABLED' => '0'], ['PS_SSL_ENABL
     checkRequirements(count($errors) === 1 && str_contains($errors[0], 'Enable SSL'), 'Disabled/missing SSL must be rejected.');
     checkRequirements($module->install() === false, 'Installation bypassed the SSL requirement.');
     checkRequirements(!upgrade_module_2_0_2($module), 'Upgrade bypassed the SSL requirement.');
+    checkRequirements(!upgrade_module_2_0_3($module), '2.0.3 upgrade bypassed the SSL requirement.');
 }
 
 Configuration::$data = ['PS_SSL_ENABLED' => 1];

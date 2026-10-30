@@ -59,9 +59,10 @@ final class FakeGateway implements Gateway {
 final class FakeOrders implements Orders {
     public int $calls = 0;
     public bool $changed = false;
+    public array $subscriber = ['first_name' => 'Amina', 'last_name' => 'O’Test', 'email' => 'test@example.invalid'];
     public function snapshot(int $cartId, int $customerId): array {
         if ($cartId !== 100 || $customerId !== 7) throw new PaymentException('Wrong cart owner.', 403);
-        return ['currency_id' => 1, 'amount_minor' => 12550, 'hash' => str_repeat('a', 64), 'subscriber' => ['email' => 'test@example.invalid']];
+        return ['currency_id' => 1, 'amount_minor' => 12550, 'hash' => str_repeat('a', 64), 'subscriber' => $this->subscriber];
     }
     public function reference(): string { return 'TESTORDER'; }
     public function complete(array $attempt): int {
@@ -135,6 +136,34 @@ $tests['Initiation persists the server cart and does not repeat on double click'
     $attempt = start($service); same('pending', $attempt['state']); same(12550, $attempt['amount_minor']);
     same(125.5, $gateway->payload['amount']['value']); same('100', $gateway->payload['metadata']['cart_id']);
     same($attempt['id'], start($service)['id']); same(1, $gateway->calls);
+};
+$tests['Outgoing STK JSON carries checkout names and a stable order reference in both environments'] = function () {
+    foreach (['sandbox', 'production'] as $environment) {
+        $url = Client::base($environment) . '/api/v2/incoming_payments/' . FakeGateway::ID;
+        [$client, $transport] = apiFixture([tokenResponse(), ['status' => 201, 'headers' => ['location' => $url], 'body' => '']], $environment);
+        $service = new Payments(new MemoryRepository(), $client, new FakeOrders(), ['shop' => 1, 'environment' => $environment, 'till' => 'K000001']);
+        $attempt = start($service);
+        $body = json_decode($transport->requests[1]['body'], true, 32, JSON_THROW_ON_ERROR);
+        same(['phone_number' => '+254712345678', 'first_name' => 'Amina', 'last_name' => 'O’Test', 'email' => 'test@example.invalid'], $body['subscriber']);
+        same(['attempt_id' => $attempt['id'], 'cart_id' => '100', 'order_reference' => $attempt['order_reference'],
+            'customer_name' => 'Amina O’Test'], $body['metadata']);
+        same('TESTORDER', $body['metadata']['order_reference']);
+        same($attempt['id'], start($service)['id']); same(2, count($transport->requests));
+    }
+};
+$tests['Optional checkout names do not introduce empty metadata or change payment verification'] = function () {
+    foreach ([['first_name' => '  Amina  '], ['last_name' => '  O’Test  '], []] as $subscriber) {
+        [$service, , $gateway, $orders] = fixture(); $orders->subscriber = $subscriber;
+        $attempt = start($service);
+        $expected = $subscriber ? trim((string) reset($subscriber)) : null;
+        same($expected, $gateway->payload['metadata']['customer_name'] ?? null);
+        same(3 + (int) ($expected !== null), count($gateway->payload['metadata']));
+        // A provider-returned name is not a financial identity check; keep exact matching authoritative.
+        $callback = payload($attempt);
+        $callback['data']['attributes']['metadata'] = $gateway->payload['metadata'];
+        $callback['data']['attributes']['event']['resource']['sender_first_name'] = 'Different payer';
+        same('completed', $service->receive($attempt['id'], $callback)['state']);
+    }
 };
 $tests['Foreign cart ownership is rejected before provider I/O'] = function () {
     [$service, , $gateway] = fixture();

@@ -1,6 +1,14 @@
 # Validation record
 
-Recorded 29 October 2026, updated for the version 2.0.2 SSL fix. Core browser/provider acceptance below used 2.0.0; the 2.0.1 branding/package changes passed local checks and the GitHub PHP 8.2–8.5 matrix. The 2.0.2 SSL guard passed fast regression tests and a read-only native PrestaShop 9.2.0 check; a fresh 2.0.2 browser installation/upgrade has not been rehearsed.
+Recorded 29 October 2026; updated 30 October 2026 for the 2.0.3 reconciliation-metadata change and the first merchant's live-payment report. Earlier core browser/provider acceptance used 2.0.0. The 2.0.2 SSL correction passed regression checks and its PHP 8.2–8.5 release matrix. The new 2.0.3 payload regression passes locally; a fresh 2.0.3 browser installation/upgrade and provider acceptance of its extra metadata have not been exercised.
+
+## First merchant live-payment report — 30 October 2026
+
+The maintainer received a merchant report of successful production checkout, PrestaShop paid orders/customer-account details/invoices, and received Kopo Kopo payments. Supplied screenshots show a **SIMIPAY (M-PESA)** order marked **Payment accepted** for **KES 10.00**, with a customer record and an invoice document, and a Kopo Kopo **Buygoods** transaction marked **Received** for **KES 10.00** on the same date. The provider transaction screen shows **Name: Not available**. The invoice's detailed contents and account-registration behavior are merchant-reported; they were not independently audited in this environment.
+
+This supplies merchant-reported evidence for the live-payment happy path and closes the absence of any client live-success report. It is not a full production certification. The installed module version, PrestaShop/PHP/theme/checkout versions, the shop's payment-entry receipt match and the callback-versus-reconciliation path are unconfirmed. No client credentials, database access or new live payments were used for this review. Customer names, phone/email, receipt/order identifiers, merchant-identifying quotes and raw screenshots are not published. Unrelated payment-schedule screenshots are excluded from the evidence.
+
+The report concerns the client's earlier installation, not the new 2.0.3 metadata. Existing code already sends checkout first/last name and email in `subscriber`. Version 2.0.3 adds the available checkout `customer_name` and reserved `order_reference` to request metadata, alongside `attempt_id`/`cart_id`. Local tests verify the actual serialized JSON in both environments, optional/Unicode names, repeat initiation and completion when the payer's name differs. These synthetic checks cannot establish which fields Kopo Kopo will show in its transaction dashboard. Its documented API does not guarantee that subscriber fields or metadata populate the transaction “Name” field. Provider-side display/metadata retention remains to be checked privately with Kopo Kopo and the merchant.
 
 ## Correction to earlier HTTPS validation
 
@@ -11,7 +19,7 @@ The original integration/demo setup explicitly added `PS_SSL_ENABLED_EVERYWHERE`
 | Check | Result |
 | --- | --- |
 | Module, tests and build scripts | PHP syntax checks pass |
-| Payment/domain/API adapter tests | 24 tests pass on PHP 8.4.16 |
+| Payment/domain/API adapter tests | 26 tests pass on PHP 8.4.16, including the new serialized metadata regression |
 | Configuration encryption tests | Round-trip, initialization, tampering and environment/shop isolation pass |
 | PrestaShop 9 SSL regression | Fast guard/install/upgrade tests and the native 9.2.0 configuration reader accept SSL enabled with the removed key absent/stale; SSL disabled is rejected |
 | Composer metadata | Strict validation passes; no third-party runtime dependencies |
@@ -46,12 +54,13 @@ The browser save exposed an admin CSRF defect that rendering alone did not catch
 ## Still required before production release
 
 - Additional real sandbox delayed/cancelled/error scenarios and the merchant's account/till acceptance. The exercised success and forced-failure callbacks are verified separately above.
-- Version 2.0.1 branding display and upgrade from 2.0.0 in the browser. The browser rehearsal was stopped at the maintainer's request; no visual or upgrade success is claimed for that change.
+- Fresh 2.0.3 ZIP installation/upgrade through Module Manager, including retained pending requests/settings and the merchant's actual checkout. Earlier branding rehearsals were stopped at the maintainer's request; the new patch has not had a full browser rehearsal.
 - Full browser checkout acceptance on standard checkout and the native one-page checkout, including guest/registered customers, stock/email behavior, and the client's actual theme or checkout customization.
 - Hosting-specific HTTPS/firewall/cache/scheduler and sensitive-file access verification.
-- Maintainer release review and a controlled live acceptance payment before general availability.
+- Provider retention/display of the new metadata and controlled 2.0.3 live revalidation, including matching the native order payment receipt/amount to Kopo Kopo.
+- Exact client module/platform/runtime/theme/checkout versions and additional failure/recovery scenarios before broad production claims.
 
-A real API request and signed callback were exercised in the provider's sandbox, which simulates payments without a phone PIN prompt or real money movement. No production payment, transfer or refund was sent. The release is an installable pre-release, not a claim of completed production acceptance. The public [v2.0.1 pre-release](https://github.com/simiyu-samuel/simipay-prestashop/releases/tag/v2.0.1) contains the merchant ZIP and checksum. Both public assets were downloaded after publication and verified for checksum, module identity, version, credits and the single `kopokopo/` root. The immutable tag identifies source commit `9eed3fa`; this post-publication record does not move that tag.
+A real API request and signed callback were exercised in the provider's sandbox, which simulates payments without a phone PIN prompt or real money movement. No production payment, transfer or refund was sent by the local test environment; the later merchant-reported live payment is recorded above. The release is an installable pre-release, not a claim of completed production acceptance. The public [v2.0.1 pre-release](https://github.com/simiyu-samuel/simipay-prestashop/releases/tag/v2.0.1) contains the merchant ZIP and checksum. Both public assets were downloaded after publication and verified for checksum, module identity, version, credits and the single `kopokopo/` root. The immutable tag identifies source commit `9eed3fa`; this post-publication record does not move that tag.
 
 Published ZIP SHA-256: `247b5fc2ca1ce244cae769324ba9b4acfe45a3e0a12926ac2a0a21b69195acf1`.
 

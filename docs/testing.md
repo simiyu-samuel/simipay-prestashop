@@ -17,7 +17,7 @@ composer --working-dir=kopokopo --no-plugins --no-scripts validate --strict
 
 Node and Composer are contributor tools, not merchant installation dependencies. The configured GitHub Actions matrix runs the fast tests on PHP 8.2, 8.3, 8.4 and 8.5. A configured workflow is not evidence that a remote run passed.
 
-The domain suite uses fake provider/PrestaShop boundaries and no real credentials or payments. It covers exact amounts, phone formatting, raw-body signatures, resource URL restrictions, ownership, duplicate initiation, failed/ambiguous outcomes, duplicate/late callbacks, interrupted completion and reconciliation. Settings tests exercise actual encryption and scope/tamper protection. Requirements tests accept the native PrestaShop 9 SSL setting with the legacy key absent or stale, and reject installation when SSL is disabled. Package checks verify its top-level directory, required files, exclusions and checksum.
+The domain suite uses fake provider/PrestaShop boundaries and no real credentials or payments. It covers exact amounts, phone formatting, raw-body signatures, resource URL restrictions, ownership, duplicate initiation, failed/ambiguous outcomes, duplicate/late callbacks, interrupted completion and reconciliation. The 2.0.3 regression checks serialized STK JSON in both environments, including subscriber names/email, at most four metadata pairs, a stable reserved order reference, optional/Unicode names and acceptance of a different named payer. Settings tests exercise actual encryption and scope/tamper protection. Requirements tests accept the native PrestaShop 9 SSL setting with the legacy key absent or stale, and reject installation when SSL is disabled. Package checks verify its top-level directory, required files, exclusions and checksum.
 
 ## Disposable PrestaShop integration smoke test
 
@@ -58,6 +58,7 @@ Record the PrestaShop patch, PHP patch, DB version, theme version and checkout m
 
 - [ ] Install the built ZIP through Module Manager; configuration opens with no PHP/Smarty errors.
 - [ ] Server requirements reject unsupported runtimes/multistore/non-HTTPS setups clearly.
+- [ ] A new STK request carries subscriber names and the expected metadata; confirm which request metadata the provider dashboard exposes without assuming its transaction Name field is editable.
 - [ ] Sandbox credentials save; blank secret fields retain secrets; connection test succeeds.
 - [ ] Switching environment does not copy credentials or cached tokens.
 - [ ] Payment preferences and KES eligibility behave correctly.

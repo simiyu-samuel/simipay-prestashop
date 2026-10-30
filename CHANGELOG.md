@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.3 — pre-release
+
+- Include the reserved PrestaShop order reference and, when available, the checkout customer name in incoming-payment request metadata. Existing subscriber first/last name and email fields remain populated.
+- Add regression coverage for the serialized request in sandbox/production, optional/Unicode names, repeat initiation and callbacks from a different named payer. Names remain reconciliation context, never payment-authentication evidence.
+- Document that Kopo Kopo controls the transaction “Name” display; this release does not promise to populate it or rewrite earlier transactions.
+- Record the first merchant-reported live KES 10 payment, paid shop order, received provider transaction and reported customer/invoice behavior on 30 October 2026. Keep unconfirmed environment, receipt matching and remaining acceptance checks explicit.
+- Ship current repository/help links in the merchant package and a native upgrade step without schema changes or credential resets.
+
 ## 2.0.2 — pre-release
 
 - Fix false SSL installation failures and checkout unavailability on PrestaShop 9. Check its native `PS_SSL_ENABLED` setting without requiring the removed `PS_SSL_ENABLED_EVERYWHERE` key. SSL remains mandatory.
