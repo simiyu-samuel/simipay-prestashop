@@ -1,6 +1,6 @@
 # Validation record
 
-Recorded 29 October 2026; updated 30 October 2026 for the 2.0.3 reconciliation-metadata change and the first merchant's live-payment report. Earlier core browser/provider acceptance used 2.0.0. The 2.0.2 SSL correction passed regression checks and its PHP 8.2–8.5 release matrix. The new 2.0.3 payload regression passes locally; a fresh 2.0.3 browser installation/upgrade and provider acceptance of its extra metadata have not been exercised.
+Recorded 29 October 2026; updated 30 October 2026 for the 2.0.3 reconciliation-metadata change and the first merchant's live-payment report. Earlier core browser/provider acceptance used 2.0.0. The 2.0.2 SSL correction passed regression checks and its PHP 8.2–8.5 release matrix. The new 2.0.3 payload regression passes locally and in the PHP 8.2–8.5 release matrix; its public ZIP is verified. A fresh 2.0.3 browser installation/upgrade and provider acceptance of its extra metadata have not been exercised.
 
 ## First merchant live-payment report — 30 October 2026
 
@@ -25,6 +25,7 @@ The original integration/demo setup explicitly added `PS_SSL_ENABLED_EVERYWHERE`
 | Composer metadata | Strict validation passes; no third-party runtime dependencies |
 | GitHub release checks | PHP 8.2, 8.3, 8.4 and 8.5 checks, packaging and publication passed in [run 40914332014](https://github.com/simiyu-samuel/simipay-prestashop/actions/runs/40914332014) |
 | SSL patch release checks | Version 2.0.2 PHP 8.2–8.5 checks, packaging and publication passed in [run 40916474008](https://github.com/simiyu-samuel/simipay-prestashop/actions/runs/40916474008) |
+| Reconciliation metadata release checks | Version 2.0.3 PHP 8.2–8.5 checks, packaging and publication passed in [run 41028849477](https://github.com/simiyu-samuel/simipay-prestashop/actions/runs/41028849477) |
 | Merchant package | Correct `kopokopo/` root, required files, exclusions, deterministic rebuild and SHA-256 checks pass |
 | Front-end script | JavaScript syntax check passes |
 | PrestaShop integration | Real PrestaShop 9.2.0, PHP 8.4.16, MariaDB 10.4.34 and official Hummingbird 2.1.2 |
@@ -73,3 +74,9 @@ Published **2.0.2** ZIP SHA-256: `1aa16a130cbdbdc39df454a1a3388e6dffc9956c4ebfb4
 ## Repository rename
 
 The canonical repository is now [`simiyu-samuel/simipay-prestashop`](https://github.com/simiyu-samuel/simipay-prestashop). Maintained source/docs links, Composer metadata, issue contact links, the admin installation-guide link, both published release descriptions and the local Git remote were updated. Published tags and assets were retained. Both versions' ZIP and checksum downloads were verified through the new repository URLs against the original SHA-256 values above; the previous 2.0.2 download URL was also checked and still resolves to the original ZIP. The release workflow already derives its repository from `github.repository`. The technical module identifier remains `kopokopo`. Composer strict validation, PHP syntax/manifest checks and the check for remaining old-name references in tracked files passed.
+
+## Published reconciliation update
+
+The [v2.0.3 pre-release](https://github.com/simiyu-samuel/simipay-prestashop/releases/tag/v2.0.3) identifies source commit `a67d1cb`. The public ZIP and checksum were downloaded after publication and verified: 59 entries under one `kopokopo/` root, 49,280 bytes, with every entry matching the tested local build byte-for-byte. The packaged module has the new metadata, versioned upgrade and current repository/install links. Existing public tags and assets were not replaced.
+
+Published **2.0.3** ZIP SHA-256: `6b3a09d3e5380a0b4d20158ee5825fe6006ece49d17e14c02e5668a4c473f7f3`.
